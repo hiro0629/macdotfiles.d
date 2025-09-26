@@ -4,6 +4,7 @@ DOTFILES_DIR="$HOME/macdotfiles.d"
 OS_TYPE=$(uname -s)
 
 # zsh
+ln -sf "$DOTFILES_DIR/zsh/zsh_profile" "$HOME/.zsh_profile"
 ln -sf "$DOTFILES_DIR/zsh/zshrc" "$HOME/.zshrc"
 
 # git

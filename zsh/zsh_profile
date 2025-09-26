@@ -1,0 +1,8 @@
+# 環境変数
+export EDITOR=nvim
+
+# ~/.zshrc を読み込む（重要）
+if [ -f ~/.zshrc ]; then
+    source ~/.zshrc
+fi
+
