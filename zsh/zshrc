@@ -1,5 +1,32 @@
+# History
+HISTFILE=~/.zsh_history
 HISTSIZE=10000
+SAVEHIST=10000
+HISTIGNORE='history:pwd:ls:ll:exit'
+setopt append_history      # 履歴を追記
+setopt share_history       # 複数シェルで履歴共有
 
+# viモード & プロンプト
 bindkey -v
+setopt prompt_subst
 
+# jj を Esc の代わりにする
+bindkey -M viins 'jj' vi-cmd-mode
 
+# --- モード表示の更新フック ---
+function zle-keymap-select {
+  case $KEYMAP in
+    vicmd)  MODE_INDICATOR="%F{orange}[Normal]%f" ;;   # Normal
+    viins|main) MODE_INDICATOR="%F{green}[Ins]%f" ;; # Insert
+    *)      MODE_INDICATOR="%F{yellow}[?]%f" ;;
+  esac
+  zle reset-prompt
+}
+zle -N zle-keymap-select
+
+# シェル起動直後の一発目にも反映
+function zle-line-init { zle-keymap-select }
+zle -N zle-line-init
+
+# --- プロンプト（左に時刻+モード表示） ---
+PROMPT='%F{cyan}%~%f %F{yellow}%D{%H:%M:%S}%f $MODE_INDICATOR %# '
