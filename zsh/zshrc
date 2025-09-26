@@ -1,3 +1,8 @@
+# alias
+if [ -f ~/.zsh_aliases ]; then
+    source ~/.zsh_aliases
+fi
+
 # History
 HISTFILE=~/.zsh_history
 HISTSIZE=10000

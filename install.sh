@@ -6,6 +6,7 @@ OS_TYPE=$(uname -s)
 # zsh
 ln -sf "$DOTFILES_DIR/zsh/zsh_profile" "$HOME/.zsh_profile"
 ln -sf "$DOTFILES_DIR/zsh/zshrc" "$HOME/.zshrc"
+ln -sf "$DOTFILES_DIR/zsh/zsh_aliases" "$HOME/.zsh_aliases"
 
 # git
 ln -sf "$DOTFILES_DIR/git/gitconfig" "$HOME/.gitconfig"
