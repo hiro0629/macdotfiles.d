@@ -3,6 +3,7 @@
 DOTFILES_DIR="$HOME/macdotfiles.d"
 OS_TYPE=$(uname -s)
 
+# zsh
 ln -sf "$DOTFILES_DIR/zsh/zshrc" "$HOME/.zshrc"
 
 # git
@@ -12,3 +13,5 @@ if [[ ! -d "$HOME/.config/git" ]]; then
 fi
 ln -sf "$DOTFILES_DIR/git/ignore" "$HOME/.config/git/ignore"
 
+# tmux
+ln -sf "$DOTFILES_DIR/tmux/tmux.conf" "$HOME/.tmux.conf"
