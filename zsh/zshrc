@@ -1,2 +1,5 @@
 HISTSIZE=10000
 
+bindkey -v
+
+

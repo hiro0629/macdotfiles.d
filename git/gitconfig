@@ -1,0 +1,21 @@
+# Comment
+#
+[user]
+    name = Tomohisa Hirota
+    email = hirota.tomohisa@gmail.com
+[alias]
+    br = branch
+    ci = commit
+    co = checkout
+    st = status -sb
+    st = status
+    sw = switch
+    lo = log --oneline
+    df = diff
+    dc = diff --cached
+    lg = log --oneline --graph --decorate --all                             
+    lgt = log --pretty=format:'%h - %an, %ar : %s'
+[core]
+	editor = nvim
+[init]
+	defaultBranch = main
