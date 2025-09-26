@@ -16,6 +16,7 @@
     lg = log --oneline --graph --decorate --all                             
     lgt = log --pretty=format:'%h - %an, %ar : %s'
 [core]
-	editor = nvim
+    editor = nvim
+    excludesfile = ~/.config/git/ignore
 [init]
-	defaultBranch = main
+    defaultBranch = main
