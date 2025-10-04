@@ -1,4 +1,3 @@
-alias la='ls -lha'
-alias sl='sl | lolcat'
-alias cmatrix='cmatrix | lolcat'
-alias py='python3'
+# editor
+alias vv='nvim'
+alias vi='vim'

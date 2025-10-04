@@ -1,3 +1,5 @@
+export EDITOR=nvim
+
 # alias
 if [ -f ~/.zsh_aliases ]; then
     source ~/.zsh_aliases
@@ -11,27 +13,35 @@ HISTIGNORE='history:pwd:ls:ll:exit'
 setopt append_history      # 履歴を追記
 setopt share_history       # 複数シェルで履歴共有
 
-# viモード & プロンプト
-bindkey -v
-setopt prompt_subst
+# starship
+export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 
-# jj を Esc の代わりにする
+# viモード（zle）
+bindkey -v
+# jjでInsert→Normal
 bindkey -M viins 'jj' vi-cmd-mode
 
-# --- モード表示の更新フック ---
-function zle-keymap-select {
+# Starship 初期化（多重初期化ガード）
+if [[ -z ${STARSHIP_INIT_DONE-} ]]; then
+  eval "$(starship init zsh)"
+  typeset -g STARSHIP_INIT_DONE=1
+fi
+
+# --- カーソル形状をモードで出し分け（※ Starshipの関数は上書きしない）---
+# 競合回避のため、zshの公式フック add-zle-hook-widget を使う
+autoload -Uz add-zle-hook-widget
+function _cursor_by_keymap {
   case $KEYMAP in
-    vicmd)  MODE_INDICATOR="%F{orange}[Normal]%f" ;;   # Normal
-    viins|main) MODE_INDICATOR="%F{green}[Ins]%f" ;; # Insert
-    *)      MODE_INDICATOR="%F{yellow}[?]%f" ;;
+    vicmd)      printf '\e[1 q' ;;  # Normal: ブロック
+    viins|main) printf '\e[5 q' ;;  # Insert: ビーム
+    # visualなど他キーマップを追加したい場合はここにcaseを足す
   esac
-  zle reset-prompt
 }
-zle -N zle-keymap-select
+add-zle-hook-widget zle-keymap-select _cursor_by_keymap
+add-zle-hook-widget zle-line-init _cursor_by_keymap
 
-# シェル起動直後の一発目にも反映
-function zle-line-init { zle-keymap-select }
-zle -N zle-line-init
+# 起動直後のカーソル（Insert想定）
+printf '\e[5 q'
 
-# --- プロンプト（左に時刻+モード表示） ---
-PROMPT='%F{cyan}%~%f %F{yellow}%D{%H:%M:%S}%f $MODE_INDICATOR %# '
+# --- 補助: Homebrew の starship を優先（任意）---
+# eval "$(/opt/homebrew/bin/brew shellenv)"  # 必要なら
