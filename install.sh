@@ -25,3 +25,7 @@ ln -sf "$DOTFILES_DIR/vim/vimrc" "$HOME/.vimrc"
 mkdir -p ~/.config/yazi
 ln -sf "$DOTFILES_DIR/yazi/theme.toml" "$HOME/.config/yazi/theme.toml"
 
+# wezterm
+mkdir -p ~/.config/wezterm
+ln -sf "$DOTFILES_DIR/wezterm/wezterm.lua" "$HOME/.config/wezterm/wezterm.lua"
+ln -sf "$DOTFILES_DIR/wezterm/keybind.lua" "$HOME/.config/wezterm/keybind.lua"
