@@ -6,9 +6,9 @@ alias vi='vim'
 alias hs='history'
 alias cl='clear'
 alias gg='git'
-alias grep='grep --color=auto -n -P'
+alias grep='grep --color=auto -n'
 alias py='python3'
-alias rm='trash-put'
+# alias rm='trash-put'
 alias sl='sl | lolcat'
 alias fortune='fortune | lolcat'
 alias cmatrix='cmatrix | lolcat'
@@ -20,8 +20,8 @@ alias pd=popd
 alias slurp='pushd - && pushd' # ref oreilly efficiend linux command
 
 # mv dir or edit setting shortcut
-alias dot='cd ~/dotfiles.d/bash/'
-alias bashrc='vi ~/.bashrc'
+alias dot='cd ~/macdotfiles.d/'
+alias zshrc='vi ~/.zshrc'
 
 # New generation command
 alias ya='yazi' # fazy finder

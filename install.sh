@@ -21,3 +21,7 @@ ln -sf "$DOTFILES_DIR/tmux/tmux.conf" "$HOME/.tmux.conf"
 # vim
 ln -sf "$DOTFILES_DIR/vim/vimrc" "$HOME/.vimrc"
 
+# yazi
+mkdir -p ~/.config/yazi
+ln -sf "$DOTFILES_DIR/yazi/theme.toml" "$HOME/.config/yazi/theme.toml"
+
