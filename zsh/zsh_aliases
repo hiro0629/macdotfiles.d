@@ -25,17 +25,20 @@ alias zshrc='vi ~/.zshrc'
 
 # New generation command
 alias ya='yazi' # fazy finder
-alias rfd='fdfind' # High speed find
+alias rfd='fd' # High speed find
 alias rgrep='rg' # grep
-alias rcat='batcat' # cat
+alias rcat='bat' # cat
 alias rls='exa' # syntax ls
 alias rcd='z' # cd
 alias rdu='dust' # disk usage
 alias rps='procs' # ps
 
+
+
+
+
 # Not yet
 alias lg='lazygit' 
-alias gs='echo "gs(ghost script) is disabled by alias setting"'
 alias rrm='rip'
 
 # docker
@@ -45,3 +48,53 @@ alias dki='docker image'
 alias dkv='docker volume'
 alias dkn='docker network'
 alias dkcmp='docker compose'
+
+
+
+# # === yazi ===
+# # yazi を起動し、終了時にそのディレクトリに移動できる wrapper を alias にしておく例
+# alias y='yazi --cwd-file "$TMPDIR/yazi-cwd"'
+# # または関数版（より正確にカレントディレクトリを追従させたい場合）
+# yazi_cd() {
+#   local tmp
+#   tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+#   yazi "$@" --cwd-file="$tmp"
+#   if cwd="$(cat -- "$tmp")" && [[ -n $cwd ]] && [[ $cwd != "$PWD" ]]; then
+#     cd -- "$cwd"
+#   fi
+#   rm -f -- "$tmp"
+# }
+# alias ycd='yazi_cd'
+# 
+# # === fd ===
+# alias f='fd'              # 短く呼ぶ用
+# alias ff='fd --hidden --follow'   # 隠しファイルも含めて検索
+# 
+# # === rg (ripgrep) ===
+# alias rg='rg --color=auto'         # 色付き出力
+# alias rr='rg --files'              # ファイル一覧だけ出す
+# 
+# # === bat ===
+# alias cat='bat'                    # 通常の cat を置き換え
+# alias batp='bat --paging=always'   # ページャを常に使う版
+# 
+# # === exa (または eza) ===
+# alias ls='exa --icons --group-directories-first'
+# alias ll='exa -lh --git --icons --group-directories-first'
+# alias la='exa -lha --git --icons --group-directories-first'
+# alias lt='exa -T --icons'          # ツリー表示
+# 
+# # === z (zoxide) ===
+# # (zoxide を使っている前提)
+# alias z='zoxide query'             # 検索だけ
+# alias zz='zoxide'                  # 通常の zoxide コマンド
+# # cd を zoxide に差し替えるなら（好みで）
+# # alias cd='zoxide cd'
+# 
+# # === dust ===
+# alias du='dust'                    # du の代替
+# alias duh='dust -r'                # 階層表示を使う版
+# 
+# # === procs ===
+# alias ps='procs'                   # ps の代替
+# alias psg='procs --tree | grep -i' # 検索付き表示

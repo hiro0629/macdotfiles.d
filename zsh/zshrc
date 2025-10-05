@@ -43,3 +43,7 @@ printf '\e[5 q'
 
 # --- 補助: Homebrew の starship を優先（任意）---
 # eval "$(/opt/homebrew/bin/brew shellenv)"  # 必要なら
+
+# zoxide
+eval "$(zoxide init zsh)"
+
