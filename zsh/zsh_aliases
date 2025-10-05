@@ -1,3 +1,47 @@
 # editor
 alias vv='nvim'
 alias vi='vim'
+
+# command short cut
+alias hs='history'
+alias cl='clear'
+alias gg='git'
+alias grep='grep --color=auto -n -P'
+alias py='python3'
+alias rm='trash-put'
+alias sl='sl | lolcat'
+alias fortune='fortune | lolcat'
+alias cmatrix='cmatrix | lolcat'
+
+# directory stack
+alias dirs='dirs -v'
+alias gd=pushd
+alias pd=popd
+alias slurp='pushd - && pushd' # ref oreilly efficiend linux command
+
+# mv dir or edit setting shortcut
+alias dot='cd ~/dotfiles.d/bash/'
+alias bashrc='vi ~/.bashrc'
+
+# New generation command
+alias ya='yazi' # fazy finder
+alias rfd='fdfind' # High speed find
+alias rgrep='rg' # grep
+alias rcat='batcat' # cat
+alias rls='exa' # syntax ls
+alias rcd='z' # cd
+alias rdu='dust' # disk usage
+alias rps='procs' # ps
+
+# Not yet
+alias lg='lazygit' 
+alias gs='echo "gs(ghost script) is disabled by alias setting"'
+alias rrm='rip'
+
+# docker
+alias dk='docker'
+alias dkc='docker container'
+alias dki='docker image'
+alias dkv='docker volume'
+alias dkn='docker network'
+alias dkcmp='docker compose'
