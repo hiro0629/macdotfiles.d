@@ -10,6 +10,8 @@ $rust\
 $golang\
 $php\
 [](fg:#212736 bg:#1d2230)\
+$python\
+[](fg:#9ece6a)\
 $time\
 [ ](fg:#1d2230)\
 \n$character"""
@@ -36,10 +38,10 @@ style = "bg:#394260"
 format = '[[($all_status$ahead_behind )](fg:#769ff0 bg:#394260)]($style)'
 
 [python]
-# 仮想環境が有効なときのみ表示（外側の () で条件付き表示）
-format = '[$symbol($version)($virtualenv)]($style) '
-symbol = "🐍 "
-style = "green bold"
+symbol = ' ' # nf-dev-python
+format = '[ ${symbol}${pyenv_prefix}(${version})(\($virtualenv\))]($style)'
+pyenv_version_name = false
+style = 'fg:#1a1b26 bg:#9ece6a'
 
 [nodejs]
 symbol = ""
