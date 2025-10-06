@@ -46,4 +46,6 @@ printf '\e[5 q'
 
 # zoxide
 eval "$(zoxide init zsh)"
-
+# brew path
+export PATH="/opt/homebrew/bin:$PATH"
+export PATH="/opt/homebrew/sbin:$PATH"
