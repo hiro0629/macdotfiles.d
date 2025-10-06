@@ -3,6 +3,11 @@ if [ -f ~/.zsh_aliases ]; then
     source ~/.zsh_aliases
 fi
 
+# 個別設定ファイルがあれば読み込む
+if [ -f ~/.zshrc_local ]; then
+  source ~/.zshrc_local
+fi
+
 # History
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
@@ -49,3 +54,10 @@ eval "$(zoxide init zsh)"
 # brew path
 export PATH="/opt/homebrew/bin:$PATH"
 export PATH="/opt/homebrew/sbin:$PATH"
+
+# pyenv
+export PATH="$HOME/.pyenv/bin:$PATH"
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init --path)"
+  eval "$(pyenv init -)"
+fi

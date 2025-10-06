@@ -8,10 +8,11 @@ alias cl='clear'
 alias gg='git'
 alias grep='grep --color=auto -n'
 alias py='python3'
-# alias rm='trash-put'
+alias rm='trash'
 alias sl='sl | lolcat'
 alias fortune='fortune | lolcat'
 alias cmatrix='cmatrix | lolcat'
+alias jl='jupyter-lab'
 
 # directory stack
 alias dirs='dirs -v'
