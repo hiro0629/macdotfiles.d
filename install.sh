@@ -29,3 +29,10 @@ ln -sf "$DOTFILES_DIR/yazi/theme.toml" "$HOME/.config/yazi/theme.toml"
 mkdir -p ~/.config/wezterm
 ln -sf "$DOTFILES_DIR/wezterm/wezterm.lua" "$HOME/.config/wezterm/wezterm.lua"
 ln -sf "$DOTFILES_DIR/wezterm/keybind.lua" "$HOME/.config/wezterm/keybind.lua"
+
+# nvim
+mkdir -p ~/.config/nvim/lua/config/plugins
+ln -sf "$DOTFILES_DIR/nvim/init.lua" "$HOME/.config/nvim/init.lua"
+ln -sf "$DOTFILES_DIR/nvim/lua/keymaps.lua" "$HOME/.config/nvim/lua/keymaps.lua"
+ln -sf "$DOTFILES_DIR/nvim/lua/options.lua" "$HOME/.config/nvim/lua/options.lua"
+
