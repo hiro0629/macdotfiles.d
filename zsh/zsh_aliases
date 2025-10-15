@@ -3,7 +3,7 @@ alias vv='nvim'
 alias vi='vim'
 
 # command short cut
-alias hs='history'
+alias hs='history 200'
 alias cl='clear'
 alias gg='git'
 alias grep='grep --color=auto -n'

@@ -10,11 +10,11 @@ fi
 
 # History
 HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
+HISTSIZE=50000
+SAVEHIST=50000
 HISTIGNORE='history:pwd:ls:ll:exit'
-setopt append_history      # 履歴を追記
-setopt share_history       # 複数シェルで履歴共有
+setopt INC_APPEND_HISTORY      # 履歴を追記
+setopt SHARE_HISTORY       # 複数シェルで履歴共有
 
 # starship
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
