@@ -42,6 +42,7 @@ symbol = ' ' # nf-dev-python
 format = '[ ${symbol}${pyenv_prefix}(${version})(\($virtualenv\))]($style)'
 pyenv_version_name = false
 style = 'fg:#1a1b26 bg:#9ece6a'
+command_timeout = 2000   # ms
 
 [nodejs]
 symbol = ""
