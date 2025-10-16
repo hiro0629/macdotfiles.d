@@ -8,7 +8,7 @@ if wezterm.config_builder then
 end
 
 -- 初期ウィンドウの列数・行数を指定
-config.initial_cols = 88
+config.initial_cols = 92
 config.initial_rows = 30
 
 -- フォントの設定
@@ -25,7 +25,7 @@ config.font_size = 23
 -- config.color_scheme = 'Dark Ocean'
 config.color_scheme = 'nightfox'
 -- 背景透過
-config.window_background_opacity = 0.98
+config.window_background_opacity = 0.2
 
 config.automatically_reload_config = true
 config.window_close_confirmation = "NeverPrompt"
