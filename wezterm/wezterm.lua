@@ -1,6 +1,7 @@
 local wezterm = require("wezterm")
 local keymaps = require("keybind")
 
+
 local config = {}
 
 if wezterm.config_builder then
@@ -25,7 +26,7 @@ config.font_size = 23
 -- config.color_scheme = 'Dark Ocean'
 config.color_scheme = 'nightfox'
 -- 背景透過
-config.window_background_opacity = 0.2
+config.window_background_opacity = 0.8
 
 config.automatically_reload_config = true
 config.window_close_confirmation = "NeverPrompt"
