@@ -13,6 +13,7 @@ alias sl='sl | lolcat'
 alias fortune='fortune | lolcat'
 alias cmatrix='cmatrix | lolcat'
 alias jl='jupyter-lab'
+alias tree2='tree -L 2'
 
 # directory stack
 alias dirs='dirs -v'
