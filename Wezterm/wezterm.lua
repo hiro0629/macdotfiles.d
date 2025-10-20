@@ -19,11 +19,11 @@ config.font = wezterm.font("Hack Nerd Font", {weight="Medium", stretch="Normal",
 config.font_size = 23
 
 -- ウィンドウ系
-config.window_background_opacity = 0.2 -- 最終の値を1か所に
+config.window_background_opacity = 0.7 -- 最終の値を1か所に
 config.automatically_reload_config = true
 config.window_close_confirmation = "NeverPrompt"
 config.default_cursor_style = "BlinkingBar"
-config.macos_window_background_blur = 20
+config.macos_window_background_blur = 0
 config.window_decorations = "NONE"
 config.window_frame = {
   inactive_titlebar_bg = "none",
@@ -74,7 +74,7 @@ config.keys = {
 local is_transparent = true
 wezterm.on("toggle-opacity", function(window, pane)
   is_transparent = not is_transparent
-  local new_opacity = is_transparent and 0.88 or 0.2
+  local new_opacity = is_transparent and 0.88 or 0.7
   window:set_config_overrides({ window_background_opacity = new_opacity })
 end)
 
