@@ -19,7 +19,7 @@ $time\
 [ ](fg:#1d2230)\
 \n$character"""
 
-right_format = "$custom.dk"
+right_format = "$custom.o"
 
 [directory]
 style = "fg:#e3e5e5 bg:#769ff0"
@@ -82,7 +82,7 @@ vimcmd_symbol           = "[●](bold yellow)" # Normal
 vimcmd_replace_symbol   = "[●](bold red)"    # Replace
 vimcmd_visual_symbol    = "[●](bold blue)"   # Visual
 
-[custom.dk]
+[custom.o]
 when = 'colima status 2>&1 | grep -qE "(^| )is running( |$)"'
 command = 'echo 🐳'
 format = "$output"   # ← これで名前や記号は出ない
