@@ -23,7 +23,10 @@ config.automatically_reload_config = true
 config.window_close_confirmation = "NeverPrompt"
 config.default_cursor_style = "BlinkingBar"
 config.macos_window_background_blur = 0
-config.window_decorations = "NONE"
+-- config.window_decorations = "NONE"
+-- config.window_decorations = "RESIZE"
+-- ボタン付きで枠あり
+config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
 config.window_frame = {
   inactive_titlebar_bg = "none",
   active_titlebar_bg = "none",
