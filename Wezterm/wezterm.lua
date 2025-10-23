@@ -87,12 +87,17 @@ table.insert(config.keys, {
   action = wezterm.action.EmitEvent("toggle-opacity"),
 })
 
--- 右クリック貼り付け
+-- 右クリック
 config.mouse_bindings = {
   {
     event = { Down = { streak = 1, button = "Right" } },
     mods = "NONE",
-    action = act({ PasteFrom = "Clipboard" }),
+    action = act.Nop,
+  },
+  {
+    event = { Up = { streak = 1, button = "Right" } },
+    mods = "NONE",
+    action = act.Nop,
   },
 }
 
