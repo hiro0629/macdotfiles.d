@@ -24,6 +24,8 @@ alias slurp='pushd - && pushd' # ref oreilly efficiend linux command
 # mv dir or edit setting shortcut
 alias dot='cd ~/macdotfiles.d/'
 alias zshrc='vi ~/.zshrc'
+alias Tmp='cd ~/Tmp'
+alias DL='cd ~/Downloads'
 
 # New generation command
 alias ya='yazi' # fazy finder

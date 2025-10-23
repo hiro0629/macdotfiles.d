@@ -92,7 +92,7 @@ config.mouse_bindings = {
   {
     event = { Down = { streak = 1, button = "Right" } },
     mods = "NONE",
-    action = act.Nop,
+    action = act.CopyTo 'Clipboard',
   },
   {
     event = { Up = { streak = 1, button = "Right" } },
@@ -100,6 +100,7 @@ config.mouse_bindings = {
     action = act.Nop,
   },
 }
+
 
 -- 外部キー定義をマージ
 config.leader = keymaps.leader

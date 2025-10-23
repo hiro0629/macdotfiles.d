@@ -4,6 +4,12 @@ local wezterm = require("wezterm")
 local keymaps = {
   leader = { key = "j", mods = "CTRL" }, -- Set Leader Key
   keys = {
+    -- Block visual mode
+    {
+      key = "v",
+      mods = "CTRL",
+      action = wezterm.action.SendString("\x16")
+    },
     -- タブの管理
     {
       key = "[",
