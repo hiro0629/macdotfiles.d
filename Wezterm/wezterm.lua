@@ -3,6 +3,22 @@ local keymaps = require("keybind")
 
 local config = wezterm.config_builder and wezterm.config_builder() or {}
 
+config.keys = {}
+-- config.keys = {
+--   -- 片方だけ残す（必要なら別のキーへ）
+--   { key = "v", mods = "CTRL", action = act.PasteFrom("Clipboard") },
+-- }
+
+-- Copy mode show
+wezterm.on("update-right-status", function(window, pane)
+  local text = ""
+  if window:active_key_table() == "copy_mode" then
+    text = " 📋 COPY MODE "
+  end
+  window:set_right_status(text)
+end)
+
+
 -- カラースキーム
 -- config.color_scheme = 'AdventureTime'
 -- config.color_scheme = 'Dracula+'
@@ -22,7 +38,7 @@ config.window_background_opacity = 0.7
 config.automatically_reload_config = true
 config.window_close_confirmation = "NeverPrompt"
 config.default_cursor_style = "BlinkingBar"
-config.macos_window_background_blur = 0
+config.macos_window_background_blur = 3
 -- config.window_decorations = "NONE"
 -- config.window_decorations = "RESIZE"
 -- ボタン付きで枠あり
@@ -65,12 +81,6 @@ config.scrollback_lines = 3500
 
 -- Actions
 local act = wezterm.action
-
--- キーは1回だけ作成し、あとから追記
-config.keys = {
-  -- 片方だけ残す（必要なら別のキーへ）
-  { key = "v", mods = "CTRL", action = act.PasteFrom("Clipboard") },
-}
 
 -- 透明度トグル
 local is_transparent = true

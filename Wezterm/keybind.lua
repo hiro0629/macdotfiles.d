@@ -10,6 +10,14 @@ local keymaps = {
       mods = "CTRL",
       action = wezterm.action.SendString("\x16")
     },
+
+    -- Copy mode
+    {
+      key = "y",
+      mods = "LEADER",
+      action = wezterm.action.ActivateCopyMode,
+    },
+
     -- タブの管理
     {
       key = "[",
@@ -51,21 +59,21 @@ local keymaps = {
       action = wezterm.action.ActivatePaneDirection("Up"),
     },
 
-
-    -- ✅ 追加: 次のペーンへ移動 (ペーン番号順)
+    -- 次のペーンへ移動 (ペーン番号順)
     {
       key = "n",
       mods = "LEADER",
       action = wezterm.action.ActivatePaneByIndex(1), -- 次のペーンへ
     },
 
-    -- ✅ 追加: 前のペーンへ移動
+    -- 前のペーンへ移動
     {
       key = "p",
       mods = "LEADER",
       action = wezterm.action.ActivatePaneByIndex(0), -- 最初のペーンへ
     },
 
+    -- Pane Split
     {
       key = "-",
       mods = "LEADER",
