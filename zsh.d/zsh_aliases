@@ -40,14 +40,7 @@ alias rls='eza' # syntax ls
 alias rcd='z' # cd
 alias rdu='dust' # disk usage
 alias rps='procs' # ps
-
-
-
-
-
-# Not yet
 alias lg='lazygit' 
-alias rrm='rip'
 
 # docker
 alias dk='docker'
@@ -57,6 +50,9 @@ alias dkv='docker volume'
 alias dkn='docker network'
 alias dkcmp='docker compose'
 
+
+# Not yet
+alias rrm='rip'
 
 
 # # === yazi ===
@@ -81,10 +77,6 @@ alias dkcmp='docker compose'
 # # === rg (ripgrep) ===
 # alias rg='rg --color=auto'         # 色付き出力
 # alias rr='rg --files'              # ファイル一覧だけ出す
-# 
-# # === bat ===
-# alias cat='bat'                    # 通常の cat を置き換え
-# alias batp='bat --paging=always'   # ページャを常に使う版
 # 
 # # === exa (または eza) ===
 # alias ls='exa --icons --group-directories-first'

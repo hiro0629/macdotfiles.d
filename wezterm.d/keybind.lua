@@ -2,7 +2,12 @@ local wezterm = require("wezterm")
 
 -- Define leader key
 local keymaps = {
-  leader = { key = "j", mods = "CTRL" }, -- Set Leader Key
+  leader = {
+    key = "j",
+    mods = "CTRL",
+    timeout_milliseconds = 3000, -- ★ ここを追加（3秒に設定）
+  },
+
   keys = {
     -- Block visual mode
     {
@@ -88,4 +93,3 @@ local keymaps = {
 }
 
 return keymaps
-
