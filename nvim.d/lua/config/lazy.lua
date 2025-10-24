@@ -17,8 +17,7 @@ vim.opt.rtp:prepend(lazypath)
 -- ここで lazy.nvim を起動
 require("lazy").setup({
   spec = {
-    -- まだプラグインは入れない
-    -- 後で: { import = "config.plugins" } とし、配下にファイルを増やす運用がおすすめ
+    { import = "config.plugins" },
   },
 
   -- UI を最小限に（必要なら後で変える）
