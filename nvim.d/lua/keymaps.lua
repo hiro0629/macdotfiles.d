@@ -1,5 +1,4 @@
 -- Leader Key
-vim.g.mapleader = " "  -- Set <Space> as the leader key
 
 local keymap = vim.keymap.set  -- Shortcut for setting keymaps
 

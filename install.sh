@@ -27,10 +27,8 @@ ln -sf "$DOTFILES_DIR/wezterm.d/keybind.lua" "$HOME/.config/wezterm/keybind.lua"
 ln -sf "$DOTFILES_DIR/starship.d/starship.toml" "$HOME/.config/starship.toml"
 
 # nvim
-mkdir -p ~/.config/nvim/lua/config/plugins
-ln -sf "$DOTFILES_DIR/nvim.d/init.lua" "$HOME/.config/nvim/init.lua"
-ln -sf "$DOTFILES_DIR/nvim.d/lua/keymaps.lua" "$HOME/.config/nvim/lua/keymaps.lua"
-ln -sf "$DOTFILES_DIR/nvim.d/lua/options.lua" "$HOME/.config/nvim/lua/options.lua"
+mkdir -p ~/.config/nvim
+stow -t "$HOME/.config/nvim" nvim.d
 
 # vim
 ln -sf "$DOTFILES_DIR/vim.d/vimrc" "$HOME/.vimrc"
