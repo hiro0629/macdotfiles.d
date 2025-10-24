@@ -23,6 +23,12 @@ vim.o.statusline = "%m %y %r %=%-14.(%l,%c%V%) %P [%{mode()}]"
 vim.opt.mouse = "a"
 vim.opt.clipboard = "unnamedplus"
 
+-- Neovim の背景を透明にする
+vim.api.nvim_set_hl(0, "Normal",      { bg = "none" })
+vim.api.nvim_set_hl(0, "NormalNC",    { bg = "none" })
+vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
+
 -- -- Performance
 -- vim.o.updatetime = 300  -- Faster UI updates
 -- vim.o.timeoutlen = 300  -- Reduce key mapping timeout

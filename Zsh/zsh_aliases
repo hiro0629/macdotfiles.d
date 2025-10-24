@@ -13,7 +13,8 @@ alias sl='sl | lolcat'
 alias fortune='fortune | lolcat'
 alias cmatrix='cmatrix | lolcat'
 alias jl='jupyter-lab'
-alias tree2='tree -L 2'
+alias t2='tree -L 2'
+alias t3='tree -L 3'
 
 # directory stack
 alias dirs='dirs -v'
@@ -24,6 +25,7 @@ alias slurp='pushd - && pushd' # ref oreilly efficiend linux command
 # mv dir or edit setting shortcut
 alias dot='cd ~/macdotfiles.d/'
 alias zshrc='vi ~/.zshrc'
+alias zalias='vv ~/.zsh_aliases'
 alias Tmp='cd ~/Tmp'
 alias DL='cd ~/Downloads'
 
