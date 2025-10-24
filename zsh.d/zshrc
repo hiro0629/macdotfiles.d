@@ -61,3 +61,13 @@ if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init --path)"
   eval "$(pyenv init -)"
 fi
+
+# myFunction
+cpf() {
+  if [[ -f "$1" ]]; then
+    cat "$1" | pbcopy
+    echo "Copied: $1"
+  else
+    echo "File not found: $1" >&2
+  fi
+}

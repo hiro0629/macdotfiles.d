@@ -83,13 +83,6 @@ config.scrollback_lines = 3500
 local act = wezterm.action
 
 -- 透明度トグル
--- local is_transparent = true
--- wezterm.on("toggle-opacity", function(window, pane)
---   is_transparent = not is_transparent
---   local new_opacity = is_transparent and 0.91 or 0.7
---   window:set_config_overrides({ window_background_opacity = new_opacity })
--- end)
-
 wezterm.on("toggle-opacity", function(window, pane)
   is_transparent = not is_transparent
   if is_transparent then
@@ -112,6 +105,13 @@ table.insert(config.keys, {
   action = wezterm.action.EmitEvent("toggle-opacity"),
 })
 
+-- Leader + f でフルスクリーン切替
+table.insert(config.keys, {
+  key = "f",
+  mods = "LEADER",
+  action = act.ToggleFullScreen,
+})
+
 -- 右クリック
 config.mouse_bindings = {
   {
@@ -125,7 +125,6 @@ config.mouse_bindings = {
     action = act.Nop,
   },
 }
-
 
 -- 外部キー定義をマージ
 config.leader = keymaps.leader
