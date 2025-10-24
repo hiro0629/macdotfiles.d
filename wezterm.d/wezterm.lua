@@ -34,11 +34,11 @@ config.font = wezterm.font("Hack Nerd Font", {weight="Medium", stretch="Normal",
 config.font_size = 23
 
 -- ウィンドウ系
-config.window_background_opacity = 0.7
+config.window_background_opacity = 0.6
+config.macos_window_background_blur = 0
 config.automatically_reload_config = true
 config.window_close_confirmation = "NeverPrompt"
 config.default_cursor_style = "BlinkingBar"
-config.macos_window_background_blur = 3
 -- config.window_decorations = "NONE"
 -- config.window_decorations = "RESIZE"
 -- ボタン付きで枠あり
@@ -83,11 +83,26 @@ config.scrollback_lines = 3500
 local act = wezterm.action
 
 -- 透明度トグル
-local is_transparent = true
+-- local is_transparent = true
+-- wezterm.on("toggle-opacity", function(window, pane)
+--   is_transparent = not is_transparent
+--   local new_opacity = is_transparent and 0.91 or 0.7
+--   window:set_config_overrides({ window_background_opacity = new_opacity })
+-- end)
+
 wezterm.on("toggle-opacity", function(window, pane)
   is_transparent = not is_transparent
-  local new_opacity = is_transparent and 0.91 or 0.7
-  window:set_config_overrides({ window_background_opacity = new_opacity })
+  if is_transparent then
+    window:set_config_overrides({
+      window_background_opacity = 0.91,
+      macos_window_background_blur = 20,
+    })
+  else
+    window:set_config_overrides({
+      window_background_opacity = 0.6,
+      macos_window_background_blur = 0,
+    })
+  end
 end)
 
 -- Leader + c を追記
