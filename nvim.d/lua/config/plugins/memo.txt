@@ -1,0 +1,237 @@
+いいね、カテゴリ別に“見通しよく”管理しましょう。
+lazy.nvim は モジュール単位の import が得意なので、カテゴリ=Luaモジュール にして小分けにします。
+
+⸻
+
+ディレクトリ構成（例）
+
+~/.config/nvim/
+└── lua
+    └── config
+        ├── lazy.lua
+        └── plugins
+            ├── init.lua          ← ここで各カテゴリを import
+            ├── ui/               ← UI/見た目
+            │   ├── lualine.lua
+            │   ├── tokyonight.lua
+            │   └── which-key.lua
+            ├── editing/          ← 編集体験
+            │   ├── comment.lua
+            │   ├── surround.lua
+            │   └── autopairs.lua
+            ├── files/            ← ファイル/検索/プロジェクト
+            │   ├── telescope.lua
+            │   └── nvim-tree.lua
+            ├── treesitter/       ← 構文解析
+            │   └── treesitter.lua
+            ├── lsp/              ← LSP/補完/フォーマット
+            │   ├── mason.lua
+            │   ├── lspconfig.lua
+            │   └── cmp.lua
+            └── git/              ← Git
+                ├── gitsigns.lua
+                └── fugitive.lua
+
+
+⸻
+
+1) config/lazy.lua（既にOKならそのままでOK）
+
+-- lua/config/lazy.lua
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({ "git","clone","--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git","--branch=stable", lazypath })
+end
+vim.opt.rtp:prepend(lazypath)
+
+require("lazy").setup({
+  spec = {
+    { import = "config.plugins" },       -- ← これが“入口”
+  },
+  change_detection = { enabled = true, notify = false },
+  performance = {
+    rtp = { disabled_plugins = { "gzip","matchit","matchparen","netrwPlugin","tarPlugin","tohtml","tutor","zipPlugin" } },
+  },
+})
+
+
+⸻
+
+2) config/plugins/init.lua（カテゴリをまとめて import）
+
+-- lua/config/plugins/init.lua
+return {
+  { import = "config.plugins.ui" },
+  { import = "config.plugins.editing" },
+  { import = "config.plugins.files" },
+  { import = "config.plugins.treesitter" },
+  { import = "config.plugins.lsp" },
+  { import = "config.plugins.git" },
+}
+
+これで ui/ など各サブフォルダ内の .lua が “一つずつ spec” として読まれます。
+
+⸻
+
+3) 各カテゴリの最小サンプル
+
+UI
+
+-- lua/config/plugins/ui/lualine.lua
+return {
+  "nvim-lualine/lualine.nvim",
+  event = "VeryLazy",
+  dependencies = { "nvim-tree/nvim-web-devicons" },
+  opts = { options = { theme = "auto" } },
+}
+
+-- lua/config/plugins/ui/tokyonight.lua
+return {
+  "folke/tokyonight.nvim",
+  lazy = false, priority = 1000,
+  opts = { style = "moon" },
+}
+
+-- lua/config/plugins/ui/which-key.lua
+return {
+  "folke/which-key.nvim",
+  event = "VeryLazy",
+  opts = {},
+}
+
+編集体験
+
+-- editing/comment.lua
+return { "numToStr/Comment.nvim", event = "VeryLazy", opts = {} }
+
+-- editing/surround.lua
+return { "kylechui/nvim-surround", event = "VeryLazy", opts = {} }
+
+-- editing/autopairs.lua
+return {
+  "windwp/nvim-autopairs",
+  event = "InsertEnter",
+  opts = { fast_wrap = {} },
+}
+
+ファイル/検索
+
+-- files/telescope.lua
+return {
+  "nvim-telescope/telescope.nvim",
+  cmd = "Telescope",
+  dependencies = { "nvim-lua/plenary.nvim" },
+  keys = {
+    { "<leader>ff", function() require("telescope.builtin").find_files() end, desc = "Find Files" },
+    { "<leader>fg", function() require("telescope.builtin").live_grep() end,  desc = "Live Grep"  },
+  },
+  opts = { defaults = { mappings = {} } },
+}
+
+-- files/nvim-tree.lua（好みで neo-tree に置換可）
+return {
+  "nvim-tree/nvim-tree.lua",
+  cmd = { "NvimTreeToggle", "NvimTreeFindFile" },
+  dependencies = { "nvim-tree/nvim-web-devicons" },
+  opts = { view = { width = 32 } },
+}
+
+Treesitter
+
+-- treesitter/treesitter.lua
+return {
+  "nvim-treesitter/nvim-treesitter",
+  build = ":TSUpdate",
+  event = { "BufReadPost", "BufNewFile" },
+  opts = {
+    ensure_installed = { "lua","vim","bash","markdown","javascript","typescript","python" },
+    highlight = { enable = true },
+    indent = { enable = true },
+  },
+}
+
+LSP/補完
+
+-- lsp/mason.lua
+return {
+  "williamboman/mason.nvim",
+  build = ":MasonUpdate",
+  opts = {},
+}
+
+-- lsp/lspconfig.lua
+return {
+  "neovim/nvim-lspconfig",
+  event = { "BufReadPre", "BufNewFile" },
+  config = function()
+    local lsp = require("lspconfig")
+    lsp.lua_ls.setup({})
+    -- 他言語は後で追加
+  end,
+  dependencies = { "williamboman/mason.nvim", "williamboman/mason-lspconfig.nvim" },
+}
+
+-- lsp/cmp.lua
+return {
+  "hrsh7th/nvim-cmp",
+  event = "InsertEnter",
+  dependencies = {
+    "hrsh7th/cmp-nvim-lsp","hrsh7th/cmp-path","hrsh7th/cmp-buffer",
+    "L3MON4D3/LuaSnip","saadparwaiz1/cmp_luasnip",
+  },
+  config = function()
+    local cmp = require("cmp")
+    cmp.setup({
+      snippet = { expand = function(args) require("luasnip").lsp_expand(args.body) end },
+      mapping = cmp.mapping.preset.insert({ ["<CR>"] = cmp.mapping.confirm({ select = true }) }),
+      sources = { { name = "nvim_lsp" }, { name = "path" }, { name = "buffer" } },
+    })
+  end,
+}
+
+-- lsp/mason-lspconfig.lua
+return {
+  "williamboman/mason-lspconfig.nvim",
+  opts = { ensure_installed = { "lua_ls" } },
+  dependencies = { "williamboman/mason.nvim" },
+}
+
+Git
+
+-- git/gitsigns.lua
+return {
+  "lewis6991/gitsigns.nvim",
+  event = { "BufReadPost", "BufNewFile" },
+  opts = {},
+}
+
+-- git/fugitive.lua
+return { "tpope/vim-fugitive", cmd = { "Git", "G" } }
+
+
+⸻
+
+4) 使い方のコツ
+	•	1プラグイン=1ファイルにすると見通しが良い
+	•	使わないカテゴリは 丸ごとコメントアウト（init.lua の import 行を消す）
+	•	一時無効化は enabled = false
+	•	遅延読み込みを積極活用：event/cmd/ft/keys を使う
+	•	キーマップは keys フィールドに書くと衝突しにくい
+
+keys = {
+  { "<leader>gg", "<cmd>LazyGit<cr>", desc = "LazyGit", mode = "n" },
+}
+
+
+
+⸻
+
+5) 便利オプション（任意）
+	•	ロックファイルでバージョン固定：:Lazy lock（lazy-lock.json をコミット）
+	•	プロファイルで起動重いときに調査：:Lazy profile
+
+⸻
+
+ここまで作れば、カテゴリごとにオン/オフ・差し替えが簡単です。
+「このカテゴリから始めたい」「このプラグインの鍵だけ書いてほしい」などあれば、その部分だけもう少し掘って仕上げます！
