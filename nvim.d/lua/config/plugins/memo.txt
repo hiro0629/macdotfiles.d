@@ -235,3 +235,106 @@ keys = {
 
 ここまで作れば、カテゴリごとにオン/オフ・差し替えが簡単です。
 「このカテゴリから始めたい」「このプラグインの鍵だけ書いてほしい」などあれば、その部分だけもう少し掘って仕上げます！
+
+
+いいですね！✨
+Neovim はプラグインが豊富なので「カテゴリ別」に整理して選ぶと管理が楽になります。
+ここでは よく使われる定番 + モダンなおすすめ をカテゴリごとにまとめます。
+
+⸻
+
+🎨 UI / 見た目
+	•	tokyonight.nvim
+→ 人気のカラースキーム。LSP/TS 対応が丁寧。
+	•	lualine.nvim
+→ 高速で拡張性あるステータスライン。
+	•	which-key.nvim
+→ <leader> を押すと候補を表示、キーマップ学習に便利。
+	•	indent-blankline.nvim
+→ インデントガイドを表示。
+
+⸻
+
+✍️ 編集体験 / テキスト操作
+	•	Comment.nvim
+→ gc でコメントトグル。
+	•	nvim-surround
+→ ysiw" で囲む、cs"' で囲み変更など。
+	•	nvim-autopairs
+→ () や "" の自動補完。
+	•	leap.nvim
+→ 高速移動。旧 easymotion 系の進化版。
+
+⸻
+
+📂 ファイル操作 / 検索
+	•	telescope.nvim
+→ fuzzy finder。ファイル検索/grep/LSP シンボル検索。
+	•	nvim-tree.lua or neo-tree.nvim
+→ ファイルツリー。VSCode エクスプローラ風。
+	•	oil.nvim
+→ バッファ上でファイル操作ができるシンプルファイラー。
+
+⸻
+
+🌳 構文解析 / Treesitter
+	•	nvim-treesitter
+→ 高精度ハイライト・インデント・コード選択。
+	•	nvim-treesitter-textobjects
+→ 関数/クラス/引数ごとの選択や移動。
+
+⸻
+
+🧠 LSP / 補完
+	•	nvim-lspconfig
+→ LSP サーバー設定。
+	•	mason.nvim
+→ LSP サーバー・Dap・formatter 管理ツール。
+	•	mason-lspconfig.nvim
+→ mason と lspconfig を繋ぐ。
+	•	nvim-cmp
+→ 補完エンジン。
+	•	LuaSnip
+→ snippet エンジン。cmp と相性良し。
+
+⸻
+
+🌀 Git 連携
+	•	gitsigns.nvim
+→ signcolumn に差分を表示、部分ステージも可能。
+	•	vim-fugitive
+→ Git 操作の古参プラグイン。:Git, :Gdiffsplit など。
+	•	diffview.nvim
+→ ブランチ間・コミット間の差分を VSCode ライクに表示。
+	•	lazygit + toggleterm.nvim
+→ TUI Git クライアントを Neovim 内で起動。
+
+⸻
+
+🖥️ Terminal / 補助
+	•	toggleterm.nvim
+→ ターミナルをトグル開閉（float / split）。
+	•	neotest
+→ 各言語のテストランナーを Neovim 内で。
+
+⸻
+
+🎁 その他便利系
+	•	noice.nvim
+→ cmdline / messages をおしゃれに拡張。
+	•	notify.nvim
+→ 通知をポップアップ表示。
+	•	symbols-outline.nvim
+→ LSP シンボルをツリー表示。
+
+⸻
+
+✅ まとめ（最小構成に絞るなら）
+	•	UI: tokyonight.nvim, lualine.nvim
+	•	編集: Comment.nvim, nvim-surround
+	•	ファイル: telescope.nvim, nvim-tree.lua
+	•	構文: nvim-treesitter
+	•	LSP: mason.nvim, nvim-lspconfig, nvim-cmp
+	•	Git: gitsigns.nvim, diffview.nvim
+
+⸻
