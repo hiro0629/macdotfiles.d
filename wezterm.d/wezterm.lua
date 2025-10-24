@@ -2,6 +2,7 @@ local wezterm = require("wezterm")
 local keymaps = require("keybind")
 
 local config = wezterm.config_builder and wezterm.config_builder() or {}
+local act    = wezterm.action
 
 config.keys = {}
 -- config.keys = {
@@ -18,7 +19,6 @@ wezterm.on("update-right-status", function(window, pane)
   window:set_right_status(text)
 end)
 
-
 -- カラースキーム
 -- config.color_scheme = 'AdventureTime'
 -- config.color_scheme = 'Dracula+'
@@ -30,22 +30,22 @@ config.initial_cols = 92
 config.initial_rows = 30
 
 -- フォント
-config.font = wezterm.font("Hack Nerd Font", {weight="Medium", stretch="Normal", style="Normal"})
+config.font      = wezterm.font("Hack Nerd Font", { weight = "Medium", stretch = "Normal", style = "Normal" })
 config.font_size = 23
 
 -- ウィンドウ系
-config.window_background_opacity = 0.6
-config.macos_window_background_blur = 0
-config.automatically_reload_config = true
-config.window_close_confirmation = "NeverPrompt"
-config.default_cursor_style = "BlinkingBar"
+config.window_background_opacity     = 0.6
+config.macos_window_background_blur  = 0
+config.automatically_reload_config   = true
+config.window_close_confirmation     = "NeverPrompt"
+config.default_cursor_style          = "BlinkingBar"
 -- config.window_decorations = "NONE"
 -- config.window_decorations = "RESIZE"
 -- ボタン付きで枠あり
 config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
 config.window_frame = {
   inactive_titlebar_bg = "none",
-  active_titlebar_bg = "none",
+  active_titlebar_bg   = "none",
 }
 config.window_background_gradient = {
   colors = { "#192330" },
@@ -72,7 +72,7 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, cfg, hover, max_width)
   return {
     { Background = { Color = background } },
     { Foreground = { Color = foreground } },
-    { Text = title },
+    { Text       = title },
   }
 end)
 
@@ -87,12 +87,12 @@ wezterm.on("toggle-opacity", function(window, pane)
   is_transparent = not is_transparent
   if is_transparent then
     window:set_config_overrides({
-      window_background_opacity = 0.91,
+      window_background_opacity    = 0.91,
       macos_window_background_blur = 20,
     })
   else
     window:set_config_overrides({
-      window_background_opacity = 0.6,
+      window_background_opacity    = 0.6,
       macos_window_background_blur = 0,
     })
   end
@@ -100,28 +100,28 @@ end)
 
 -- Leader + c を追記
 table.insert(config.keys, {
-  key = "c",
-  mods = "LEADER",
+  key    = "c",
+  mods   = "LEADER",
   action = wezterm.action.EmitEvent("toggle-opacity"),
 })
 
 -- Leader + f でフルスクリーン切替
 table.insert(config.keys, {
-  key = "f",
-  mods = "LEADER",
+  key    = "f",
+  mods   = "LEADER",
   action = act.ToggleFullScreen,
 })
 
 -- 右クリック
 config.mouse_bindings = {
   {
-    event = { Down = { streak = 1, button = "Right" } },
-    mods = "NONE",
+    event  = { Down = { streak = 1, button = "Right" } },
+    mods   = "NONE",
     action = act.CopyTo 'Clipboard',
   },
   {
-    event = { Up = { streak = 1, button = "Right" } },
-    mods = "NONE",
+    event  = { Up = { streak = 1, button = "Right" } },
+    mods   = "NONE",
     action = act.Nop,
   },
 }
