@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/bin/zsh
 set -euo pipefail
 
 # ==============================
@@ -57,6 +57,30 @@ symlink "${DOTFILES_DIR}/vim.d/vimrc" "${HOME}/.vimrc"
 ensure_dir "${HOME}/.config/yazi"
 [[ -f "${DOTFILES_DIR}/yazi.d/theme.toml"  ]] && symlink "${DOTFILES_DIR}/yazi.d/theme.toml"  "${HOME}/.config/yazi/theme.toml"
 [[ -f "${DOTFILES_DIR}/yazi.d/keymap.toml" ]] && symlink "${DOTFILES_DIR}/yazi.d/keymap.toml" "${HOME}/.config/yazi/keymap.toml"
+
+# ---------- Karabiner ----------
+# 期待する構成:
+# macdotfiles.d/karabiner.d/
+#   ├─ karabiner.json
+#   └─ assets/
+#       └─ complex_modifications/...
+ensure_dir "${HOME}/.config/karabiner"
+
+# メイン設定ファイル
+if [[ -f "${DOTFILES_DIR}/karabiner.d/karabiner.json" ]]; then
+  symlink "${DOTFILES_DIR}/karabiner.d/karabiner.json" "${HOME}/.config/karabiner/karabiner.json"
+  echo "[+] Linked karabiner.json"
+else
+  echo "[!] ${DOTFILES_DIR}/karabiner.d/karabiner.json が見つかりません（スキップ）"
+fi
+
+# assets（存在する場合のみ）。※assetsディレクトリ自体をリンクするので事前に作らない
+if [[ -d "${DOTFILES_DIR}/karabiner.d/assets" ]]; then
+  ln -snf "${DOTFILES_DIR}/karabiner.d/assets" "${HOME}/.config/karabiner/assets"
+  echo "[+] Linked karabiner assets -> ${HOME}/.config/karabiner/assets"
+else
+  echo "[=] karabiner assets なし（任意）"
+fi
 
 # ---------- calc venv (lightweight IPython) ----------
 CALC_VENV="${CALC_VENV:-$HOME/.venvs/calc}"

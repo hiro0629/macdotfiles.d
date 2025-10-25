@@ -1,0 +1,149 @@
+{
+  "global": {
+    "check_for_updates_on_startup": true // 起動時にアップデート確認
+  },
+  "profiles": [
+    {
+      "name": "Default profile",   // プロファイル名
+      "selected": true,            // このプロファイルを有効化
+      "virtual_hid_keyboard": {
+        "keyboard_type_v2": "ansi" // US配列など
+      },
+      "simple_modifications": [],  // 単純なキー置換（今回は未使用）
+      "parameters": {
+        "basic.to_if_alone_timeout_milliseconds": 300,        // 単押し判定の猶予
+        "basic.to_if_held_down_threshold_milliseconds": 150,  // 長押し判定しきい値
+        "basic.to_delayed_action_delay_milliseconds": 600     // Leader(Ctrl+K)後に次キーを受け付ける猶予
+      },
+      "complex_modifications": {
+        "rules": [
+          {
+            "description": "CapsLock to Ctrl/Esc", // CapsLock→Ctrl（保持）/Esc（単押し）
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": { "key_code": "caps_lock", "modifiers": { "optional": ["any"] } },
+                "to": [ { "key_code": "left_control" } ],
+                "to_if_alone": [ { "key_code": "escape" } ]
+              }
+            ]
+          },
+          {
+            "description": "Prevent accidental Cmd+Q", // Cmd+Q誤爆防止（長押しのみ有効）
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": { "key_code": "q", "modifiers": { "mandatory": ["command"] } },
+                "to_if_alone": [],
+                "to_if_held_down": [ { "key_code": "q", "modifiers": ["command"] } ]
+              }
+            ]
+          },
+          {
+            "description": "Right Command alone toggles Kana/Eisu; held works as Command", // 右Cmd単押しで かな/英数 トグル
+            "manipulators": [
+              {
+                // ime_toggle=0 のとき → かな に切替（押しながらは通常の⌘）
+                "type": "basic",
+                "from": { "key_code": "right_command", "modifiers": { "optional": ["any"] } },
+                "to": [ { "key_code": "right_command" } ],
+                "to_if_alone": [
+                  { "set_variable": { "name": "ime_toggle", "value": 1 } },
+                  { "key_code": "japanese_kana" }
+                ],
+                "conditions": [
+                  { "type": "variable_if", "name": "ime_toggle", "value": 0 }
+                ]
+              },
+              {
+                // ime_toggle=1 のとき → 英数 に切替
+                "type": "basic",
+                "from": { "key_code": "right_command", "modifiers": { "optional": ["any"] } },
+                "to": [ { "key_code": "right_command" } ],
+                "to_if_alone": [
+                  { "set_variable": { "name": "ime_toggle", "value": 0 } },
+                  { "key_code": "japanese_eisuu" }
+                ],
+                "conditions": [
+                  { "type": "variable_if", "name": "ime_toggle", "value": 1 }
+                ]
+              }
+            ]
+          },
+
+          /* ===== 追記：Ctrl+K を Leader にしてアプリ起動 ===== */
+          {
+            "description": "Ctrl+K as Leader (w=WezTerm, t=TradingView App, c=Chrome, a=ChatGPT App, o=Obsidian)",
+            "manipulators": [
+              {
+                // Ctrl+K で leader_k=1。600ms 経過で自動解除
+                "type": "basic",
+                "from": {
+                  "key_code": "k",
+                  "modifiers": { "mandatory": ["control"], "optional": ["any"] }
+                },
+                "to": [ { "set_variable": { "name": "leader_k", "value": 1 } } ],
+                "to_delayed_action": {
+                  "to_if_invoked": [
+                    { "set_variable": { "name": "leader_k", "value": 0 } } // 時間切れで解除
+                  ]
+                }
+              },
+              {
+                // Leader + w → WezTerm 起動
+                "type": "basic",
+                "from": { "key_code": "w", "modifiers": { "optional": ["any"] } },
+                "conditions": [ { "type": "variable_if", "name": "leader_k", "value": 1 } ],
+                "to": [
+                  { "shell_command": "open -na 'WezTerm'" },
+                  { "set_variable": { "name": "leader_k", "value": 0 } }
+                ]
+              },
+              {
+                // Leader + t → TradingView（デスクトップアプリ）
+                "type": "basic",
+                "from": { "key_code": "t", "modifiers": { "optional": ["any"] } },
+                "conditions": [ { "type": "variable_if", "name": "leader_k", "value": 1 } ],
+                "to": [
+                  { "shell_command": "open -na 'TradingView'" },
+                  { "set_variable": { "name": "leader_k", "value": 0 } }
+                ]
+              },
+              {
+                // Leader + c → Google Chrome 起動
+                "type": "basic",
+                "from": { "key_code": "c", "modifiers": { "optional": ["any"] } },
+                "conditions": [ { "type": "variable_if", "name": "leader_k", "value": 1 } ],
+                "to": [
+                  { "shell_command": "open -na 'Google Chrome'" },
+                  { "set_variable": { "name": "leader_k", "value": 0 } }
+                ]
+              },
+              {
+                // Leader + a → ChatGPT（デスクトップアプリ）
+                "type": "basic",
+                "from": { "key_code": "a", "modifiers": { "optional": ["any"] } },
+                "conditions": [ { "type": "variable_if", "name": "leader_k", "value": 1 } ],
+                "to": [
+                  { "shell_command": "open -na 'ChatGPT'" },
+                  { "set_variable": { "name": "leader_k", "value": 0 } }
+                ]
+              },
+              {
+                // Leader + o → Obsidian 起動
+                "type": "basic",
+                "from": { "key_code": "o", "modifiers": { "optional": ["any"] } },
+                "conditions": [ { "type": "variable_if", "name": "leader_k", "value": 1 } ],
+                "to": [
+                  { "shell_command": "open -na 'Obsidian'" },
+                  { "set_variable": { "name": "leader_k", "value": 0 } }
+                ]
+              }
+            ]
+          }
+          /* ===== 追記ここまで ===== */
+        ]
+      }
+    }
+  ]
+}
