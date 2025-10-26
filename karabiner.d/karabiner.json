@@ -12,7 +12,7 @@
       "simple_modifications": [],  // 単純なキー置換（今回は未使用）
       "parameters": {
         "basic.to_if_alone_timeout_milliseconds": 300,        // 単押し判定の猶予
-        "basic.to_if_held_down_threshold_milliseconds": 150,  // 長押し判定しきい値
+        "basic.to_if_held_down_threshold_milliseconds": 120,  // 長押し判定しきい値（Cmd+Qなどに影響）
         "basic.to_delayed_action_delay_milliseconds": 600     // Leader(Ctrl+K)後に次キーを受け付ける猶予
       },
       "complex_modifications": {
@@ -34,8 +34,8 @@
               {
                 "type": "basic",
                 "from": { "key_code": "q", "modifiers": { "mandatory": ["command"] } },
-                "to_if_alone": [],
-                "to_if_held_down": [ { "key_code": "q", "modifiers": ["command"] } ]
+                "to_if_alone": [], // 短く押しただけでは何もしない
+                "to_if_held_down": [ { "key_code": "q", "modifiers": ["command"] } ] // 長押しでQuit
               }
             ]
           },
@@ -73,7 +73,7 @@
 
           /* ===== 追記：Ctrl+K を Leader にしてアプリ起動 ===== */
           {
-            "description": "Ctrl+K as Leader (w=WezTerm, t=TradingView App, c=Chrome, a=ChatGPT App, o=Obsidian)",
+            "description": "Ctrl+K as Leader (w=WezTerm, t=TradingView App, c=Chrome, a=ChatGPT App, o=Obsidian, g=PWAChatGPT)",
             "manipulators": [
               {
                 // Ctrl+K で leader_k=1。600ms 経過で自動解除
@@ -138,6 +138,20 @@
                   { "shell_command": "open -na 'Obsidian'" },
                   { "set_variable": { "name": "leader_k", "value": 0 } }
                 ]
+              },
+              {
+                // ★ Leader + g → PWA ChatGPT（Vivaldi/Chrome系のPWA .app を直接起動）
+                //   パスはユーザー環境に合わせてフルパス指定：
+                //   /Users/hirotatomohisa/Applications/Chrome Apps.localized/PWAChatGPT.app
+                "type": "basic",
+                "from": { "key_code": "g", "modifiers": { "optional": ["any"] } },
+                "conditions": [ { "type": "variable_if", "name": "leader_k", "value": 1 } ],
+                "to": [
+                  {
+                    "shell_command": "open -a '/Users/hirotatomohisa/Applications/Chrome Apps.localized/PWAChatGPT.app'"
+                  },
+                  { "set_variable": { "name": "leader_k", "value": 0 } }
+                ]
               }
             ]
           }
@@ -147,3 +161,4 @@
     }
   ]
 }
+
