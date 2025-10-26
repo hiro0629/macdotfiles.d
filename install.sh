@@ -99,6 +99,10 @@ else
   echo "[=] calc venv already exists: ${CALC_VENV}"
 fi
 
+# ---------- Hammerspoon ----------
+ensure_dir "${HOME}/.hammerspoon"
+symlink "${DOTFILES_DIR}/hammerspoon.d/init.lua" "${HOME}/.hammerspoon/init.lua"
+
 echo
 echo "✅ Setup complete."
 echo "   - Dotfiles : ${DOTFILES_DIR}"
