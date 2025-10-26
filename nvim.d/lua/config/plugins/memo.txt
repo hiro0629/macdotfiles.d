@@ -1,3 +1,7 @@
+nvim-lspconfig
+conform
+nvim-cmp
+
 いいね、カテゴリ別に“見通しよく”管理しましょう。
 lazy.nvim は モジュール単位の import が得意なので、カテゴリ=Luaモジュール にして小分けにします。
 

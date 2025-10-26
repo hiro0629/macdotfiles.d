@@ -1,7 +1,7 @@
 -- treesitter/treesitter.lua
 return {
   "nvim-treesitter/nvim-treesitter",
---  enabled = false,
+  enabled = true, -- enabled->true,disable->false
   build = ":TSUpdate",
   event = { "BufReadPost", "BufNewFile" },
   opts = {

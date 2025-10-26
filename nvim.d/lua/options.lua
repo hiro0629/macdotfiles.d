@@ -19,6 +19,15 @@ vim.o.autoindent = true  -- Copy indentation from the previous line
 
 vim.o.statusline = "%m %y %r %=%-14.(%l,%c%V%) %P [%{mode()}]"
 
+vim.opt.list = true
+vim.opt.listchars = {
+  tab = "»·",
+  trail = "·",
+  space = "·",
+  extends = "→",
+  precedes = "←",
+}
+
 -- Paste
 vim.opt.mouse = "a"
 vim.opt.clipboard = "unnamedplus"

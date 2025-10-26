@@ -1,6 +1,7 @@
 -- files/telescope.lua
 return {
   "nvim-telescope/telescope.nvim",
+  enabled = true, -- enabled->true,disable->false
   cmd = "Telescope",
   dependencies = { "nvim-lua/plenary.nvim" },
   keys = {

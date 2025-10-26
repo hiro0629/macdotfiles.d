@@ -1,5 +1,6 @@
 return {
   "akinsho/toggleterm.nvim",
+  enabled = true, -- enabled->true,disable->false
   version = "*",              -- 最新安定版
   cmd = { "ToggleTerm" },     -- コマンド呼び出しで遅延ロード
   keys = {

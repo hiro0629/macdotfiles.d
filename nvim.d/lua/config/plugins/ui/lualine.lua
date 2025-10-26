@@ -1,7 +1,7 @@
 -- ~/.config/nvim/lua/config/plugins/lualine.lua
 return {
   "nvim-lualine/lualine.nvim",
-  -- enabled = false, -- enabled->false
+  enabled = true, -- enabled->true,disable->false
   dependencies = { "nvim-tree/nvim-web-devicons" }, -- アイコン表示が必要なら
   opts = {
     options = {
