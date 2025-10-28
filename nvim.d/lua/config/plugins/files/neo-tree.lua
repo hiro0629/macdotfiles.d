@@ -16,6 +16,7 @@ return {
         enable_diagnostics = true,
         filesystem = {
           follow_current_file = { enabled = true }, -- カレントファイル追従
+          hijack_netrw_behavior = "disabled",       -- ★ディレクトリ起動時に勝手にneo-treeが開かないようにする
           filtered_items = {
             hide_dotfiles = false, -- .ファイルも表示
             hide_gitignored = true,
