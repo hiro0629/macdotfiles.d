@@ -36,7 +36,7 @@ symlink "${DOTFILES_DIR}/tmux.d/tmux.conf"   "${HOME}/.tmux.conf"
 # ---------- WezTerm ----------
 ensure_dir "${HOME}/.config/wezterm"
 symlink "${DOTFILES_DIR}/wezterm.d/wezterm.lua" "${HOME}/.config/wezterm/wezterm.lua"
-symlink "${DOTFILES_DIR}/wezterm.d/keybind.lua" "${HOME}/.config/wezterm/keybind.lua"
+symlink "${DOTFILES_DIR}/wezterm.d/keymap.lua" "${HOME}/.config/wezterm/keymap.lua"
 
 # ---------- Starship ----------
 ensure_dir "${HOME}/.config"
