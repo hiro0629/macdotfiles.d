@@ -37,9 +37,9 @@ M.keys = {
   { key = "-", mods = "LEADER", action = wezterm.action.SplitVertical({   domain = "CurrentPaneDomain" }) },
   { key = "1", mods = "LEADER", action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
 
-  -- お好み：Leader+b → 透明度トグル、Leader+f → フルスクリーン
-  { key = "b", mods = "LEADER", action = wezterm.action.EmitEvent("toggle-opacity") },
-  { key = "f", mods = "LEADER", action = wezterm.action.ToggleFullScreen },
+    -- お好み：Leader+b → 透明度トグル
+    { key = "b", mods = "LEADER", action = wezterm.action.EmitEvent("toggle-opacity") },
+
 }
 
 return M

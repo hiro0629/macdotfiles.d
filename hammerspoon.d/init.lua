@@ -1,16 +1,75 @@
 ------------------------------------------------------------
--- Leader = Ctrl+J でアプリランチャ（起動 or 既存ウィンドウへフォーカス）
--- WezTermにフォーカスした時は ABC（英数）へ切替
+-- Hammerspoon Key Launcher (Leader = Ctrl+J)
+--
+-- [Launcher keys]
+--   a : PWA ChatGPT  (Vivaldi/Chrome系 PWA 起動/フォーカス)
+--   g : ChatGPT      (デスクトップ版 起動/フォーカス)
+--   w : WezTerm      (起動/フォーカス)
+--   t : TradingView  (起動/フォーカス)
+--   c : Google Chrome(起動/フォーカス)
+--   o : Obsidian     (起動/フォーカス)
+--   v : VimR         (~/Tmp をCWDにして新規起動)
+--   f : Maximize <-> Restore（Spaceを増やさない独自最大化）
+--   x : Zoom（緑ボタン相当、FSならまず解除）
+--
+-- [Auto behaviors]
+--   • WezTerm 前面時は英数(ABC)を強制（即時＋短遅延2回＋軽量ウォッチ）
+--   • Hammerspoon 起動直後に Preferences/Console を自動クローズ
 ------------------------------------------------------------
--- WezTerm フォーカス時は常に英数入力
+
+hs.application.enableSpotlightForNameSearches(true)
+
+------------------------------------------------------------
+-- 設定
+------------------------------------------------------------
+local HOME = os.getenv("HOME")
+local ABC  = "com.apple.keylayout.ABC"
+
+-- WezTerm 英数固定ウォッチ（有効/間隔）
+local ENABLE_WEZTERM_IME_WATCHDOG = true
+local WEZTERM_IME_WATCH_INTERVAL  = 2.0
+
+------------------------------------------------------------
+-- WezTerm 前面で英数固定：最強化ブロック
+------------------------------------------------------------
+local function forceLatin()
+  if hs.eventtap.isSecureInputEnabled() then
+    hs.alert.show("Secure Input有効中: 英数切替がブロックされています")
+    return
+  end
+  if hs.keycodes.currentSourceID() == ABC then return end
+  hs.keycodes.currentSourceID(ABC); if hs.keycodes.currentSourceID() == ABC then return end
+  hs.keycodes.setLayout("ABC");     if hs.keycodes.currentSourceID() == ABC then return end
+  hs.eventtap.keyStroke({}, "japanese_eisuu", 0)
+end
+
+local function setLatinRobust()
+  forceLatin()
+  hs.timer.doAfter(0.07, forceLatin)
+  hs.timer.doAfter(0.25, forceLatin)
+end
+
 local appWatcher = hs.application.watcher.new(function(appName, eventType)
   if eventType == hs.application.watcher.activated and appName == "WezTerm" then
-    hs.keycodes.currentSourceID("com.apple.keylayout.ABC")
+    setLatinRobust()
   end
 end)
 appWatcher:start()
 
--- 起動直後に Hammerspoon の余計なウィンドウを閉じる（簡易）
+local wf_wez = hs.window.filter.new(false)
+wf_wez:allowApp("WezTerm")
+wf_wez:subscribe(hs.window.filter.windowFocused, function() setLatinRobust() end)
+
+if ENABLE_WEZTERM_IME_WATCHDOG then
+  hs.timer.doEvery(WEZTERM_IME_WATCH_INTERVAL, function()
+    local app = hs.application.frontmostApplication()
+    if app and app:name() == "WezTerm" then forceLatin() end
+  end)
+end
+
+------------------------------------------------------------
+-- Hammerspoon 起動直後に余計なウィンドウを閉じる
+------------------------------------------------------------
 hs.timer.doAfter(0.5, function()
   local app = hs.appfinder.appFromName("Hammerspoon")
   if not app then return end
@@ -21,89 +80,179 @@ hs.timer.doAfter(0.5, function()
 end)
 
 ------------------------------------------------------------
--- アプリ起動/フォーカス用ヘルパ（Bundle ID 優先 → 名前 → パス）
+-- ユーティリティ（ウィンドウ取得/フレーム比較/起動ヘルパ）
 ------------------------------------------------------------
+local function getCurrentWindow()
+  local function ok(w) return w and w:isStandard() and not w:isMinimized() and w:isVisible() end
+  local win = hs.window.focusedWindow(); if ok(win) then return win end
+  local app = hs.application.frontmostApplication()
+  if app then
+    win = app:mainWindow(); if ok(win) then return win end
+    for _, w in ipairs(app:allWindows()) do if ok(w) then return w end end
+  end
+  local pt = hs.mouse.getAbsolutePosition()
+  if hs.window.windowAtPoint then
+    win = hs.window.windowAtPoint(pt); if ok(win) then return win end
+  end
+  for _, w in ipairs(hs.window.orderedWindows()) do if ok(w) then return w end end
+  if hs.window.frontmostWindow then
+    win = hs.window.frontmostWindow(); if ok(win) then return win end
+  end
+  return nil
+end
+
+local function framesEqual(a, b, tol)
+  tol = tol or 2
+  return math.abs(a.x-b.x)<=tol and math.abs(a.y-b.y)<=tol and
+         math.abs(a.w-b.w)<=tol and math.abs(a.h-b.h)<=tol
+end
+
 local function launch_or_focus(opts)
-  -- opts = { bundle_ids = {..}, name = "AppName", path = "/path/App.app", open_arg = nil or "dir/path" }
   if opts.bundle_ids then
     for _, id in ipairs(opts.bundle_ids) do
       if hs.application.launchOrFocusByBundleID(id) then return true end
     end
   end
-  if opts.name and hs.application.launchOrFocus(opts.name) then
-    return true
-  end
+  if opts.name and hs.application.launchOrFocus(opts.name) then return true end
   if opts.path then
-    local cmd
-    if opts.open_arg then
-      -- 引数を渡して開く（例: VimR で特定フォルダ）
-      cmd = string.format([[open -a "%s" "%s"]], opts.path, opts.open_arg)
-    else
-      cmd = string.format([[open -a "%s"]], opts.path)
-    end
-    hs.execute(cmd, true)
-    return true
+    local cmd = opts.open_arg and string.format([[open -a "%s" "%s"]], opts.path, opts.open_arg)
+                              or string.format([[open -a "%s"]], opts.path)
+    hs.execute(cmd, true); return true
   end
   return false
 end
 
 ------------------------------------------------------------
--- ターゲットアプリ定義（必要に応じて増やせます）
+-- 個別：ChatGPT / PWA ChatGPT
 ------------------------------------------------------------
-local HOME = os.getenv("HOME")
+local function focusChatGPT()
+  local IDS = { "com.openai.chat", "com.openai.chat.release", "com.openai.chat.beta" }
+  for _, id in ipairs(IDS) do if hs.application.launchOrFocusByBundleID(id) then return true end end
+  if hs.application.launchOrFocus("ChatGPT") then return true end
+  local found = hs.execute([[mdfind 'kMDItemCFBundleIdentifier=="com.openai.chat" || kMDItemDisplayName=="ChatGPT"' | head -n1]], true)
+  found = found and found:gsub("%s+$","")
+  if found and found:match("^/") then hs.execute(string.format([[open -a "%s"]], found), true); return true end
+  for _, p in ipairs({ "/Applications/ChatGPT.app", HOME.."/Applications/ChatGPT.app" }) do
+    if hs.fs.attributes(p) then hs.execute(string.format([[open -a "%s"]], p), true); return true end
+  end
+  hs.alert.show("ChatGPT not found"); return false
+end
 
+local function focusPWAChatGPT()
+  local IDS = { "com.vivaldi.Vivaldi.app.cadlkienfkclaiaibeoongdcgmdikeeg" }
+  for _, id in ipairs(IDS) do if hs.application.launchOrFocusByBundleID(id) then return true end end
+  local fixed = HOME .. "/Applications/Chrome Apps.localized/PWAChatGPT.app"
+  if hs.fs.attributes(fixed) then hs.execute(string.format([[open -a "%s"]], fixed), true); return true end
+  local found = hs.execute([[mdfind 'kMDItemFSName=="PWAChatGPT.app"' | head -n1]], true)
+  found = found and found:gsub("%s+$","")
+  if found and found:match("^/") then hs.execute(string.format([[open -a "%s"]], found), true); return true end
+  hs.alert.show("PWA ChatGPT not found"); return false
+end
+
+------------------------------------------------------------
+-- ターゲットアプリ
+------------------------------------------------------------
 local targets = {
-  -- w: WezTerm（あなたの環境の BUNDLE ID を先頭に）
   w = { bundle_ids = { "com.github.wez.wezterm", "org.wezfurlong.wezterm" }, name = "WezTerm" },
-
-  -- t: TradingView（デスクトップ版）
   t = { bundle_ids = { "com.tradingview.desktop" }, name = "TradingView" },
-
-  -- c: Google Chrome
-  c = { bundle_ids = { "com.google.Chrome"     }, name = "Google Chrome" },
-
-  -- a: ChatGPT（App Store 版想定、無ければ name で）
-  a = { bundle_ids = { "com.openai.chat", "com.openai.chat.release", "com.openai.chat.beta" }, name = "ChatGPT" },
-
-  -- o: Obsidian
-  o = { bundle_ids = { "md.obsidian"           }, name = "Obsidian" },
-
-  -- g: PWA ChatGPT（Vivaldi PWA：あなたの実 ID）
-  g = { bundle_ids = { "com.vivaldi.Vivaldi.app.cadlkienfkclaiaibeoongdcgmdikeeg" },
-        name = "PWAChatGPT",
-        path = HOME .. "/Applications/Chrome Apps.localized/PWAChatGPT.app" },
-
-  -- v: VimR（~/Tmp を開く。既存起動があれば再利用。※毎回新規ではない）
-  v = { bundle_ids = { "com.qvacua.VimR" }, name = "VimR", path = "VimR", open_arg = HOME .. "/Tmp" },
+  c = { bundle_ids = { "com.google.Chrome" }, name = "Google Chrome" },
+  o = { bundle_ids = { "md.obsidian" }, name = "Obsidian" },
 }
 
 ------------------------------------------------------------
--- Leader = Ctrl+J
+-- VimR を ~/Tmp をCWDにして“必ず”新規起動（CLI優先）
+------------------------------------------------------------
+local function focusVimRInTmp()
+  local tmp = HOME .. "/Tmp"
+  hs.fs.mkdir(tmp)
+
+  -- あなたの環境の vimr CLI
+  local cli = "/opt/homebrew/bin/vimr"
+  local function exists(p) return p and hs.fs.attributes(p) ~= nil end
+
+  if exists(cli) then
+    -- 1) --cwd が使える新しめの vimr
+    local ok = hs.execute(string.format([[%q -n --cwd %q]], cli, tmp), true)
+    if ok then return end
+    -- 2) 互換: -c 'cd …' でNeovimにExコマンド注入
+    ok = hs.execute(string.format([[%q -n -c %q]], cli, "cd " .. tmp), true)
+    if ok then return end
+  end
+
+  -- 3) GUI フォールバック（表示ディレクトリは正しいがCWDは不確実）
+  hs.execute(string.format([[open -n -a "VimR" %q]], tmp), true)
+
+  -- 4) 最終保険：前面がVimRになったら :cd を自動投入（Normal前提）
+  hs.timer.doAfter(0.6, function()
+    local app = hs.application.frontmostApplication()
+    if app and app:name() == "VimR" then
+      hs.eventtap.keyStrokes(":cd " .. tmp)
+      hs.eventtap.keyStroke({}, "return")
+    end
+  end)
+end
+
+------------------------------------------------------------
+-- 独自最大化/復元 & 緑ボタン相当
+------------------------------------------------------------
+local savedFrames = {}
+
+local function toggleMaximizeCurrentWindow()
+  local win = getCurrentWindow()
+  if not win then hs.alert.show("No focusable window"); return end
+  win:focus()
+  local id  = win:id()
+  local scr = win:screen():frame()
+  local cur = win:frame()
+  if framesEqual(cur, scr, 2) then
+    local prev = savedFrames[id]
+    if prev then win:setFrame(prev, 0); savedFrames[id] = nil
+    else
+      local w, h = math.floor(scr.w*0.7), math.floor(scr.h*0.7)
+      local x = scr.x + math.floor((scr.w - w)/2)
+      local y = scr.y + math.floor((scr.h - h)/2)
+      win:setFrame({x=x,y=y,w=w,h=h}, 0)
+    end
+  else
+    savedFrames[id] = cur
+    win:setFrame(scr, 0)
+  end
+end
+
+local function toggleZoomLikeGreen()
+  local win = getCurrentWindow()
+  if not win then hs.alert.show("No focusable window"); return end
+  if win:isFullScreen() then win:setFullScreen(false); return end
+  local ok = pcall(function() win:toggleZoom() end)
+  if ok then return end
+  local btn = win:zoomButton()
+  if btn then btn:performAction("AXPress") else hs.alert.show("Zoom button not available") end
+end
+
+------------------------------------------------------------
+-- Leader = Ctrl+J（0.8s ワンショット）
 ------------------------------------------------------------
 local leader = hs.hotkey.modal.new({ "ctrl" }, "j")
 local function exitLeader() leader:exit() end
-leader.entered = function() hs.timer.doAfter(0.6, function() leader:exit() end) end
+leader.entered = function() hs.timer.doAfter(0.8, function() leader:exit() end) end
 
--- Leader + key → 起動 or 既存へフォーカス（※新規起動は原則しない）
-local function bind_leader(letter)
-  leader:bind({}, letter, function()
-    local t = targets[letter]
-    if not t then return exitLeader() end
-    -- VimR のフォルダは存在保障
-    if letter == "v" then hs.fs.mkdir(HOME .. "/Tmp") end
-    launch_or_focus(t)
-    exitLeader()
-  end)
-  -- Ctrl押しっぱなしでも反応
-  leader:bind({ "ctrl" }, letter, function()
-    local t = targets[letter]
-    if not t then return exitLeader() end
-    if letter == "v" then hs.fs.mkdir(HOME .. "/Tmp") end
-    launch_or_focus(t)
-    exitLeader()
-  end)
+local function bind_leader(letter, fn)
+  leader:bind({}, letter, function() (fn or function() end)(); exitLeader() end)
+  leader:bind({ "ctrl" }, letter, function() (fn or function() end)(); exitLeader() end)
 end
 
-for _, k in ipairs({ "w", "t", "c", "a", "o", "g", "v" }) do
-  bind_leader(k)
-end
+------------------------------------------------------------
+-- キーバインド
+------------------------------------------------------------
+bind_leader("w", function() launch_or_focus(targets.w) end)
+bind_leader("t", function() launch_or_focus(targets.t) end)
+bind_leader("c", function() launch_or_focus(targets.c) end)
+bind_leader("o", function() launch_or_focus(targets.o) end)
+bind_leader("v", function() focusVimRInTmp() end)
+
+-- a ↔ g（ご指定どおり）
+bind_leader("a", function() focusPWAChatGPT() end)  -- PWA ChatGPT
+bind_leader("g", function() focusChatGPT() end)     -- ChatGPT
+
+bind_leader("f", function() toggleMaximizeCurrentWindow() end) -- 独自最大化/復元
+bind_leader("x", function() toggleZoomLikeGreen() end)         -- 緑ボタン相当
