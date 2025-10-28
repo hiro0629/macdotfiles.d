@@ -11,6 +11,7 @@
 --   v : VimR         (~/Tmp をCWDにして新規起動)
 --   f : Maximize <-> Restore（Spaceを増やさない独自最大化）
 --   x : Zoom（緑ボタン相当、FSならまず解除）
+--   s : Screenshot, rename and save into ~/Pictures/Screenshots
 --
 -- [Auto behaviors]
 --   • WezTerm 前面時は英数(ABC)を強制（即時＋短遅延2回＋軽量ウォッチ）
@@ -231,16 +232,41 @@ local function bind_leader(letter, fn)
 end
 
 ------------------------------------------------------------
+-- スクリーンショット（部分選択 → ~/Pictures/Screenshots/screen_shot_YYYYMMDD_HHMMSS.png）
+------------------------------------------------------------
+local function takePartialScreenshotToPictures()
+  local dir = HOME .. "/Pictures/Screenshots"
+  if not hs.fs.attributes(dir) then hs.fs.mkdir(dir) end
+  local ts  = os.date("%Y%m%d_%H%M%S")
+  local file = string.format("%s/screen_shot_%s.png", dir, ts)
+
+  -- -i: 範囲選択, -o: シャッター音なし
+  local task = hs.task.new("/usr/sbin/screencapture",
+    function(exitCode, _, err)
+      if exitCode == 0 then
+        hs.alert.show("Saved: " .. file)
+      else
+        hs.alert.show("screencapture error: " .. (err or tostring(exitCode)))
+      end
+    end,
+    { "-i", "-o", file }
+  )
+  task:start()
+end
+
+------------------------------------------------------------
 -- キーバインド
 ------------------------------------------------------------
 bind_leader("t", function() launch_or_focus(targets.t) end) -- WezTerm
 bind_leader("w", function() launch_or_focus(targets.w) end) -- TradingView
-bind_leader("c", function() launch_or_focus(targets.c) end)
-bind_leader("o", function() launch_or_focus(targets.o) end)
-bind_leader("v", function() focusVimRInTmp() end)
+bind_leader("c", function() launch_or_focus(targets.c) end) -- Chrome
+bind_leader("o", function() launch_or_focus(targets.o) end) -- Obsidian
+bind_leader("v", function() focusVimRInTmp() end) -- VimR
 
-bind_leader("a", function() focusPWAChatGPT() end)
-bind_leader("g", function() focusChatGPT() end)
+bind_leader("a", function() focusPWAChatGPT() end) -- PWA ChatGPT
+bind_leader("g", function() focusChatGPT() end) -- ChatGPT
 
 bind_leader("f", function() toggleMaximizeCurrentWindow() end)
 bind_leader("x", function() toggleZoomLikeGreen() end)
+
+bind_leader("s", function() takePartialScreenshotToPictures() end) -- Screenshot
