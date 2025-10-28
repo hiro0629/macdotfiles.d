@@ -4,8 +4,8 @@
 -- [Launcher keys]
 --   a : PWA ChatGPT  (Vivaldi/Chrome系 PWA 起動/フォーカス)
 --   g : ChatGPT      (デスクトップ版 起動/フォーカス)
---   w : WezTerm      (起動/フォーカス)
---   t : TradingView  (起動/フォーカス)
+--   t : WezTerm      (起動/フォーカス)   ★入替済
+--   w : TradingView  (起動/フォーカス)   ★入替済
 --   c : Google Chrome(起動/フォーカス)
 --   o : Obsidian     (起動/フォーカス)
 --   v : VimR         (~/Tmp をCWDにして新規起動)
@@ -25,12 +25,12 @@ hs.application.enableSpotlightForNameSearches(true)
 local HOME = os.getenv("HOME")
 local ABC  = "com.apple.keylayout.ABC"
 
--- WezTerm 英数固定ウォッチ（有効/間隔）
+-- WezTerm 英数固定ウォッチ
 local ENABLE_WEZTERM_IME_WATCHDOG = true
 local WEZTERM_IME_WATCH_INTERVAL  = 2.0
 
 ------------------------------------------------------------
--- WezTerm 前面で英数固定：最強化ブロック
+-- WezTerm 前面で英数固定
 ------------------------------------------------------------
 local function forceLatin()
   if hs.eventtap.isSecureInputEnabled() then
@@ -80,7 +80,7 @@ hs.timer.doAfter(0.5, function()
 end)
 
 ------------------------------------------------------------
--- ユーティリティ（ウィンドウ取得/フレーム比較/起動ヘルパ）
+-- ユーティリティ
 ------------------------------------------------------------
 local function getCurrentWindow()
   local function ok(w) return w and w:isStandard() and not w:isMinimized() and w:isVisible() end
@@ -153,36 +153,26 @@ end
 -- ターゲットアプリ
 ------------------------------------------------------------
 local targets = {
-  w = { bundle_ids = { "com.github.wez.wezterm", "org.wezfurlong.wezterm" }, name = "WezTerm" },
-  t = { bundle_ids = { "com.tradingview.desktop" }, name = "TradingView" },
+  t = { bundle_ids = { "com.github.wez.wezterm", "org.wezfurlong.wezterm" }, name = "WezTerm" },
+  w = { bundle_ids = { "com.tradingview.desktop" }, name = "TradingView" },
   c = { bundle_ids = { "com.google.Chrome" }, name = "Google Chrome" },
   o = { bundle_ids = { "md.obsidian" }, name = "Obsidian" },
 }
 
 ------------------------------------------------------------
--- VimR を ~/Tmp をCWDにして“必ず”新規起動（CLI優先）
+-- VimR を ~/Tmp にして新規起動
 ------------------------------------------------------------
 local function focusVimRInTmp()
   local tmp = HOME .. "/Tmp"
   hs.fs.mkdir(tmp)
-
-  -- あなたの環境の vimr CLI
   local cli = "/opt/homebrew/bin/vimr"
-  local function exists(p) return p and hs.fs.attributes(p) ~= nil end
-
-  if exists(cli) then
-    -- 1) --cwd が使える新しめの vimr
+  if hs.fs.attributes(cli) then
     local ok = hs.execute(string.format([[%q -n --cwd %q]], cli, tmp), true)
     if ok then return end
-    -- 2) 互換: -c 'cd …' でNeovimにExコマンド注入
     ok = hs.execute(string.format([[%q -n -c %q]], cli, "cd " .. tmp), true)
     if ok then return end
   end
-
-  -- 3) GUI フォールバック（表示ディレクトリは正しいがCWDは不確実）
   hs.execute(string.format([[open -n -a "VimR" %q]], tmp), true)
-
-  -- 4) 最終保険：前面がVimRになったら :cd を自動投入（Normal前提）
   hs.timer.doAfter(0.6, function()
     local app = hs.application.frontmostApplication()
     if app and app:name() == "VimR" then
@@ -196,7 +186,6 @@ end
 -- 独自最大化/復元 & 緑ボタン相当
 ------------------------------------------------------------
 local savedFrames = {}
-
 local function toggleMaximizeCurrentWindow()
   local win = getCurrentWindow()
   if not win then hs.alert.show("No focusable window"); return end
@@ -230,7 +219,7 @@ local function toggleZoomLikeGreen()
 end
 
 ------------------------------------------------------------
--- Leader = Ctrl+J（0.8s ワンショット）
+-- Leader = Ctrl+J
 ------------------------------------------------------------
 local leader = hs.hotkey.modal.new({ "ctrl" }, "j")
 local function exitLeader() leader:exit() end
@@ -244,15 +233,14 @@ end
 ------------------------------------------------------------
 -- キーバインド
 ------------------------------------------------------------
-bind_leader("w", function() launch_or_focus(targets.w) end)
-bind_leader("t", function() launch_or_focus(targets.t) end)
+bind_leader("t", function() launch_or_focus(targets.t) end) -- WezTerm
+bind_leader("w", function() launch_or_focus(targets.w) end) -- TradingView
 bind_leader("c", function() launch_or_focus(targets.c) end)
 bind_leader("o", function() launch_or_focus(targets.o) end)
 bind_leader("v", function() focusVimRInTmp() end)
 
--- a ↔ g（ご指定どおり）
-bind_leader("a", function() focusPWAChatGPT() end)  -- PWA ChatGPT
-bind_leader("g", function() focusChatGPT() end)     -- ChatGPT
+bind_leader("a", function() focusPWAChatGPT() end)
+bind_leader("g", function() focusChatGPT() end)
 
-bind_leader("f", function() toggleMaximizeCurrentWindow() end) -- 独自最大化/復元
-bind_leader("x", function() toggleZoomLikeGreen() end)         -- 緑ボタン相当
+bind_leader("f", function() toggleMaximizeCurrentWindow() end)
+bind_leader("x", function() toggleZoomLikeGreen() end)
