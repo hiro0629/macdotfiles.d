@@ -36,3 +36,17 @@ keymap("v", "<leader>d", '"+d',  { noremap = true, silent = true, desc = "Cut se
 -- <leader>p : クリップボードから貼り付け
 keymap("n", "<leader>p", '"+p',  { noremap = true, silent = true, desc = "Paste from clipboard" })
 keymap("v", "<leader>p", '"+p',  { noremap = true, silent = true, desc = "Paste from clipboard" })
+
+-- ===========================
+-- Leader / Split / Window
+-- ===========================
+
+-- 分割：<Space> - / |
+keymap("n", "<leader>-", ":split<CR>",   { desc = "水平分割" })
+keymap("n", "<leader>|", ":vsplit<CR>",  { desc = "垂直分割" })
+
+-- ウィンドウ移動を <Space> + h/j/k/l に割り当て
+keymap("n", "<leader>h", "<C-w>h", { desc = "左のウィンドウへ" })
+keymap("n", "<leader>j", "<C-w>j", { desc = "下のウィンドウへ" })
+keymap("n", "<leader>k", "<C-w>k", { desc = "上のウィンドウへ" })
+keymap("n", "<leader>l", "<C-w>l", { desc = "右のウィンドウへ" })
