@@ -34,13 +34,13 @@ HISTFILE=~/.zsh_history
 HISTSIZE=50000
 SAVEHIST=50000
 # 特定コマンドは履歴に残さない
-HISTIGNORE='history:pwd:ls:ll:exit'
+HISTIGNORE='history:pwd:ls:ll:exit:dot:Tmp:vv:git:gg'
 setopt INC_APPEND_HISTORY      # 履歴をリアルタイムに追記
 setopt SHARE_HISTORY           # 複数シェル間で履歴共有
 
 # --- (オプション) 履歴のノイズを減らす ---
-#setopt HIST_IGNORE_DUPS       # 同じコマンドを連続で実行した場合、1つだけ保存
-#setopt HIST_REDUCE_BLANKS     # 余分な空白を削除して履歴保存
+setopt HIST_IGNORE_DUPS       # 同じコマンドを連続で実行した場合、1つだけ保存
+setopt HIST_REDUCE_BLANKS     # 余分な空白を削除して履歴保存
 
 # ============================================
 # 補完設定 (オプション) / Completion (optional)
@@ -49,20 +49,20 @@ setopt SHARE_HISTORY           # 複数シェル間で履歴共有
 # 必要になったら一つずつ # を外して試してください。
 
 # --- 補完システムの初期化 ---
-#autoload -Uz compinit
-#compinit
+autoload -Uz compinit
+compinit
 
 # --- 補完メニューを選択式にする（Tab で一覧 → 矢印キーで選択） ---
-#zstyle ':completion:*' menu select
+zstyle ':completion:*' menu select
 
 # --- 補完の大文字・小文字を区別しない ---
-#zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
 # --- 単語の途中でも補完できるようにする（complete_in_word） ---
-#setopt COMPLETE_IN_WORD
+setopt COMPLETE_IN_WORD
 
 # --- (オプション) エイリアスでも補完を効かせる ---
-#setopt COMPLETE_ALIASES
+setopt COMPLETE_ALIASES
 
 # ============================================
 # Starship / プロンプト設定
