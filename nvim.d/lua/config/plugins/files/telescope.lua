@@ -33,7 +33,43 @@ return {
       end,
       desc = "Telescope: Live Grep",
     },
-  },
+
+    -- バッファ一覧
+    {
+      "<leader>fb",
+      function()
+        require("telescope.builtin").buffers({
+          sort_mru = true,           -- 最近使った順に並べる
+          ignore_current_buffer = true, -- 今のバッファはリストから除外
+        })
+      end,
+      desc = "Telescope: Buffers",
+    },
+
+    -- 最近開いたファイル履歴
+    {
+      "<leader>fo",
+      function()
+        require("telescope.builtin").oldfiles({
+          previewer = true,
+          only_cwd = false, -- プロジェクト横断で履歴を表示
+        })
+      end,
+      desc = "Telescope: Recent files",
+    },
+
+    -- Git status
+    {
+      "<leader>gs",
+      function()
+        require("telescope.builtin").git_status({
+          previewer = true,
+        })
+      end,
+      desc = "Telescope: Git status",
+    },
+
+},
 
   -- ✅ Telescope 全体設定
   opts = {
@@ -46,6 +82,15 @@ return {
       },
 
       mappings = {},
+    },
+
+    -- 🔽 pickers.buffers にデフォルト設定
+    pickers = {
+      buffers = {
+        sort_mru = true,
+        ignore_current_buffer = true,
+        previewer = true,
+      },
     },
 
     -- 🔽 fzf 拡張の設定（おすすめ値）
