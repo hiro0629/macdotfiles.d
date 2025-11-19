@@ -1,35 +1,85 @@
-# 基本設定
+# ============================================
+# 基本設定 / General
+# ============================================
 export LANG=ja_JP.UTF-8
 export EDITOR="nvim"
 
-# alias
+# ============================================
+# エイリアス / Aliases
+# ============================================
 if [ -f ~/.zsh_aliases ]; then
     source ~/.zsh_aliases
 fi
 
-# 個別設定ファイルがあれば読み込む
+# ローカル設定（マシンごとに変えたい設定用）
 if [ -f ~/.zshrc_local ]; then
   source ~/.zshrc_local
 fi
 
-# ディレクトリ名だけで移動できる
+# ============================================
+# シェル基本挙動 / Shell behavior
+# ============================================
+# ディレクトリ名だけで移動できるようにする（`cd` 省略）
 setopt autocd
 
-# History
+# --- (オプション) 軽めのスペル補正 / Command spell correction ---
+# cd ~/Ptojects → ~/Projects のようなタイプミスを自動補正
+#setopt correct          # コマンド名のスペル補正
+#setopt correct_all      # 引数も含めて補正（好みで）
+
+# --------------------------------------------
+# 履歴設定 / History
+# --------------------------------------------
 HISTFILE=~/.zsh_history
 HISTSIZE=50000
 SAVEHIST=50000
+# 特定コマンドは履歴に残さない
 HISTIGNORE='history:pwd:ls:ll:exit'
-setopt INC_APPEND_HISTORY      # 履歴を追記
-setopt SHARE_HISTORY           # 複数シェルで履歴共有
+setopt INC_APPEND_HISTORY      # 履歴をリアルタイムに追記
+setopt SHARE_HISTORY           # 複数シェル間で履歴共有
 
-# starship
+# --- (オプション) 履歴のノイズを減らす ---
+#setopt HIST_IGNORE_DUPS       # 同じコマンドを連続で実行した場合、1つだけ保存
+#setopt HIST_REDUCE_BLANKS     # 余分な空白を削除して履歴保存
+
+# ============================================
+# 補完設定 (オプション) / Completion (optional)
+# ============================================
+# zsh の強力な補完機能を明示的に有効化・強化したい場合に使うブロックです。
+# 必要になったら一つずつ # を外して試してください。
+
+# --- 補完システムの初期化 ---
+#autoload -Uz compinit
+#compinit
+
+# --- 補完メニューを選択式にする（Tab で一覧 → 矢印キーで選択） ---
+#zstyle ':completion:*' menu select
+
+# --- 補完の大文字・小文字を区別しない ---
+#zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+
+# --- 単語の途中でも補完できるようにする（complete_in_word） ---
+#setopt COMPLETE_IN_WORD
+
+# --- (オプション) エイリアスでも補完を効かせる ---
+#setopt COMPLETE_ALIASES
+
+# ============================================
+# Starship / プロンプト設定
+# ============================================
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 
 # viモード（zle）
 bindkey -v
-# jjでInsert→Normal
+# Insert モードで `jj` → Normal モードへ
 bindkey -M viins 'jj' vi-cmd-mode
+
+# --- (オプション) 追加キーバインド例 / Extra keybindings (optional) ---
+# ↑↓ で「コマンド履歴をインクリメンタル検索」したい場合などに。
+#bindkey '^P' up-line-or-history      # Ctrl-p: 上の履歴
+#bindkey '^N' down-line-or-history    # Ctrl-n: 下の履歴
+#bindkey '^A' beginning-of-line       # Ctrl-a: 行頭へ
+#bindkey '^E' end-of-line             # Ctrl-e: 行末へ
 
 # Starship 初期化（多重初期化ガード）
 if [[ -z ${STARSHIP_INIT_DONE-} ]]; then
@@ -37,12 +87,15 @@ if [[ -z ${STARSHIP_INIT_DONE-} ]]; then
   typeset -g STARSHIP_INIT_DONE=1
 fi
 
-# --- カーソル形状をモードで出し分け（※ Starshipの関数は上書きしない）---
+# --------------------------------------------
+# カーソル形状をモードで出し分け
+# （※ Starshipの関数は上書きしない）
+# --------------------------------------------
 autoload -Uz add-zle-hook-widget
 function _cursor_by_keymap {
   case $KEYMAP in
-    vicmd)      printf '\e[1 q' ;;  # Normal: ブロック
-    viins|main) printf '\e[5 q' ;;  # Insert: ビーム
+    vicmd)      printf '\e[1 q' ;;  # Normal: ブロックカーソル
+    viins|main) printf '\e[5 q' ;;  # Insert: ビームカーソル
   esac
 }
 add-zle-hook-widget zle-keymap-select _cursor_by_keymap
@@ -50,24 +103,36 @@ add-zle-hook-widget zle-line-init _cursor_by_keymap
 # 起動直後のカーソル（Insert想定）
 printf '\e[5 q'
 
-# --- 補助: Homebrew の starship を優先（任意）---
+# --- 補助: Homebrew の starship を優先（必要なら有効化）---
 # eval "$(/opt/homebrew/bin/brew shellenv)"  # 必要なら
 
-# zoxide
+# ============================================
+# ツール連携 / Tools
+# ============================================
+
+# zoxide（高速ディレクトリジャンプ）
 eval "$(zoxide init zsh)"
 
-# brew path
+# --------------------------------------------
+# Homebrew PATH
+# --------------------------------------------
 export PATH="/opt/homebrew/bin:$PATH"
 export PATH="/opt/homebrew/sbin:$PATH"
 
-# pyenv
+# --------------------------------------------
+# pyenv 設定
+# --------------------------------------------
 export PATH="$HOME/.pyenv/bin:$PATH"
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init --path)"
   eval "$(pyenv init -)"
 fi
 
-# myFunction
+# ============================================
+# ユーティリティ関数 / Utility functions
+# ============================================
+
+# fcp: ファイル内容を pbcopy でクリップボードへ
 fcp() {
   if [[ -f "$1" ]]; then
     cat "$1" | pbcopy
@@ -83,7 +148,6 @@ fcp() {
 # - IPython 終了時に deactivate
 # - 呼び出し元シェルの環境は汚さない
 # ==========================
-
 calc() {
   local VENV="${CALC_VENV:-$HOME/.venvs/calc}"
   # オプションは配列にしておく
@@ -105,4 +169,10 @@ calc() {
   )
 }
 
+# --- (オプション) ディレクトリ移動後に自動で ls する ---
+#chpwd() { ls -la }
+
+# ============================================
+# fzf 設定 / fzf integration
+# ============================================
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
