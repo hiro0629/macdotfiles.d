@@ -1,3 +1,7 @@
+# 基本設定
+export LANG=ja_JP.UTF-8
+export EDITOR="nvim"
+
 # alias
 if [ -f ~/.zsh_aliases ]; then
     source ~/.zsh_aliases
@@ -7,6 +11,9 @@ fi
 if [ -f ~/.zshrc_local ]; then
   source ~/.zshrc_local
 fi
+
+# ディレクトリ名だけで移動できる
+setopt autocd
 
 # History
 HISTFILE=~/.zsh_history
@@ -97,3 +104,5 @@ calc() {
     type deactivate >/dev/null 2>&1 && deactivate
   )
 }
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

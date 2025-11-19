@@ -16,6 +16,7 @@ alias jl='jupyter-lab'
 alias t2='tree -L 2'
 alias t3='tree -L 3'
 alias t4='tree -L 4'
+alias t5='tree -L 5'
 alias q='exit'
 
 # directory stack
@@ -33,6 +34,7 @@ alias DL='cd ~/Downloads'
 
 # New generation command
 alias ya='yazi' # fazy finder
+alias ff='fzf' # fzf
 alias rfd='fd' # High speed find
 alias rgrep='rg' # grep
 alias rcat='bat' # cat
@@ -41,6 +43,10 @@ alias rcd='z' # cd
 alias rdu='dust' # disk usage
 alias rps='procs' # ps
 alias lg='lazygit' 
+
+# Combo
+alias f='fzf --preview "bat --style=numbers --color=always {} 2>/dev/null"'
+alias fh='history | fzf'
 
 # docker
 alias dk='docker'

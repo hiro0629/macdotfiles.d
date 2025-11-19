@@ -58,6 +58,14 @@ ensure_dir "${HOME}/.config/yazi"
 [[ -f "${DOTFILES_DIR}/yazi.d/theme.toml"  ]] && symlink "${DOTFILES_DIR}/yazi.d/theme.toml"  "${HOME}/.config/yazi/theme.toml"
 [[ -f "${DOTFILES_DIR}/yazi.d/keymap.toml" ]] && symlink "${DOTFILES_DIR}/yazi.d/keymap.toml" "${HOME}/.config/yazi/keymap.toml"
 
+# ---------- fzf ----------
+if [[ -f "${DOTFILES_DIR}/fzf.d/fzf.zsh" ]]; then
+  symlink "${DOTFILES_DIR}/fzf.d/fzf.zsh" "${HOME}/.fzf.zsh"
+  echo "[+] Linked fzf.zsh -> ${HOME}/.fzf.zsh"
+else
+  echo "[!] ${DOTFILES_DIR}/fzf.d/fzf.zsh が見つかりません（fzf設定スキップ）"
+fi
+
 # ---------- Karabiner ----------
 # 期待する構成:
 # macdotfiles.d/karabiner.d/
