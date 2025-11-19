@@ -47,6 +47,7 @@ alias lg='lazygit'
 # Combo
 alias f='fzf --preview "bat --style=numbers --color=always {} 2>/dev/null"'
 alias fh='history | fzf'
+alias vf='vv $(f)'
 
 # docker
 alias dk='docker'
