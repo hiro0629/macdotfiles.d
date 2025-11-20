@@ -8,8 +8,8 @@ return {
 
     wk.add({
       { "<leader>a", group = "ai" },
-      { "<leader>d", group = "database" },
-      { "<leader>e", group = "editing" },
+      { "<leader>d", group = "clipboad" },
+--      { "<leader>e", group = "editing" },
       { "<leader>f", group = "files" },
       { "<leader>g", group = "git" },
       { "<leader>l", group = "lsp" },

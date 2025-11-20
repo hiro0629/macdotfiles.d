@@ -1,38 +1,45 @@
 return {
   {
     "nvim-neo-tree/neo-tree.nvim",
-    enabled = true, -- enabled->true,disable->false
-    branch = "v3.x", -- 安定版を指定
+    enabled = true,
+    branch = "v3.x", -- ← v4 ではなく v3.x を使い続けるならここは v3.x
+                     -- v4 を使う場合は branch 行を削除
+
     dependencies = {
       "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons", -- アイコン
+      "nvim-tree/nvim-web-devicons",
       "MunifTanjim/nui.nvim",
     },
+
+    keys = {
+      { "<leader>fe", "<cmd>Neotree toggle<CR>", desc = "Neo-tree Toggle" },
+      { "<leader>fE", "<cmd>Neotree focus<CR>",  desc = "Neo-tree Focus"  },
+    },
+
     config = function()
       require("neo-tree").setup({
-        close_if_last_window = true, -- 最後のウィンドウなら閉じる
+        close_if_last_window = true,
         popup_border_style = "rounded",
         enable_git_status = true,
         enable_diagnostics = true,
+
         filesystem = {
-          follow_current_file = { enabled = true }, -- カレントファイル追従
-          hijack_netrw_behavior = "disabled",       -- ★ディレクトリ起動時に勝手にneo-treeが開かないようにする
+          follow_current_file = { enabled = true }, -- ★ v4形式
+          hijack_netrw_behavior = "disabled",
           filtered_items = {
-            hide_dotfiles = false, -- .ファイルも表示
+            hide_dotfiles = false,
             hide_gitignored = true,
           },
         },
+
         buffers = {
-          follow_current_file = true, -- バッファ一覧も追従
+          follow_current_file = { enabled = true }, -- ★ v4形式
         },
+
         git_status = {
           window = { position = "float" },
         },
       })
-
-      -- キーマップ例
-      vim.keymap.set("n", "<leader>e", ":Neotree toggle<CR>", { desc = "Neo-tree Toggle" })
-      vim.keymap.set("n", "<leader>o", ":Neotree focus<CR>", { desc = "Neo-tree Focus" })
     end,
   }
 }

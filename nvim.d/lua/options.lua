@@ -17,7 +17,8 @@ vim.o.shiftwidth = 4  -- Indentation level
 vim.o.smartindent = true  -- Auto-indent new lines
 vim.o.autoindent = true  -- Copy indentation from the previous line
 
-vim.o.statusline = "%m %y %r %=%-14.(%l,%c%V%) %P [%{mode()}]"
+-- Comment out because using lualine
+-- vim.o.statusline = "%m %y %r %=%-14.(%l,%c%V%) %P [%{mode()}]"
 
 vim.opt.list = true
 vim.opt.listchars = {
