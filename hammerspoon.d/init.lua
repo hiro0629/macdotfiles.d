@@ -9,6 +9,8 @@
 --   c : Google Chrome(起動/フォーカス)
 --   o : Obsidian     (起動/フォーカス)
 --   v : VimR         (~/Tmp をCWDにして新規起動)
+--   d : Downloads    (Finder で ~/Downloads を開く)
+--   m : Gemini       (Chromeアプリ版 起動/フォーカス)
 --   f : Maximize <-> Restore（Spaceを増やさない独自最大化）
 --   x : Zoom（緑ボタン相当、FSならまず解除）
 --   s : Screenshot, rename and save into ~/Pictures/Screenshots
@@ -124,30 +126,76 @@ local function launch_or_focus(opts)
 end
 
 ------------------------------------------------------------
--- 個別：ChatGPT / PWA ChatGPT
+-- 個別：ChatGPT / PWA ChatGPT / Gemini
 ------------------------------------------------------------
 local function focusChatGPT()
   local IDS = { "com.openai.chat", "com.openai.chat.release", "com.openai.chat.beta" }
-  for _, id in ipairs(IDS) do if hs.application.launchOrFocusByBundleID(id) then return true end end
+  for _, id in ipairs(IDS) do
+    if hs.application.launchOrFocusByBundleID(id) then return true end
+  end
   if hs.application.launchOrFocus("ChatGPT") then return true end
   local found = hs.execute([[mdfind 'kMDItemCFBundleIdentifier=="com.openai.chat" || kMDItemDisplayName=="ChatGPT"' | head -n1]], true)
   found = found and found:gsub("%s+$","")
-  if found and found:match("^/") then hs.execute(string.format([[open -a "%s"]], found), true); return true end
+  if found and found:match("^/") then
+    hs.execute(string.format([[open -a "%s"]], found), true); return true
+  end
   for _, p in ipairs({ "/Applications/ChatGPT.app", HOME.."/Applications/ChatGPT.app" }) do
-    if hs.fs.attributes(p) then hs.execute(string.format([[open -a "%s"]], p), true); return true end
+    if hs.fs.attributes(p) then
+      hs.execute(string.format([[open -a "%s"]], p), true); return true
+    end
   end
   hs.alert.show("ChatGPT not found"); return false
 end
 
 local function focusPWAChatGPT()
   local IDS = { "com.vivaldi.Vivaldi.app.cadlkienfkclaiaibeoongdcgmdikeeg" }
-  for _, id in ipairs(IDS) do if hs.application.launchOrFocusByBundleID(id) then return true end end
+  for _, id in ipairs(IDS) do
+    if hs.application.launchOrFocusByBundleID(id) then return true end
+  end
   local fixed = HOME .. "/Applications/Chrome Apps.localized/PWAChatGPT.app"
-  if hs.fs.attributes(fixed) then hs.execute(string.format([[open -a "%s"]], fixed), true); return true end
+  if hs.fs.attributes(fixed) then
+    hs.execute(string.format([[open -a "%s"]], fixed), true); return true
+  end
   local found = hs.execute([[mdfind 'kMDItemFSName=="PWAChatGPT.app"' | head -n1]], true)
   found = found and found:gsub("%s+$","")
-  if found and found:match("^/") then hs.execute(string.format([[open -a "%s"]], found), true); return true end
+  if found and found:match("^/") then
+    hs.execute(string.format([[open -a "%s"]], found), true); return true
+  end
   hs.alert.show("PWA ChatGPT not found"); return false
+end
+
+-- Chrome から App 化した Gemini を起動/フォーカス（パスをかなり広めに探索）
+local function focusGemini()
+  -- 1. まず名前で素直に起動（Launchpad に出てくるタイプならこれで済む）
+  if hs.application.launchOrFocus("Gemini") then
+    return true
+  end
+
+  -- 2. よくある配置パターン（/Applications / ~/Applications の両方）
+  local candidates = {
+    "/Applications/Gemini.app",
+    "/Applications/Chrome Apps.localized/Gemini.app",
+    HOME .. "/Applications/Gemini.app",
+    HOME .. "/Applications/Chrome Apps.localized/Gemini.app",
+  }
+  for _, p in ipairs(candidates) do
+    if hs.fs.attributes(p) then
+      hs.execute(string.format([[open -a "%s"]], p), true)
+      return true
+    end
+  end
+
+  -- 3. Spotlight でアプリ名・表示名から探す（Gemini という名前の .app）
+  local query = [[mdfind 'kMDItemFSName=="Gemini.app" || kMDItemDisplayName=="Gemini"' | head -n1]]
+  local found = hs.execute(query, true)
+  found = found and found:gsub("%s+$", "")
+  if found and found:match("^/") then
+    hs.execute(string.format([[open -a "%s"]], found), true)
+    return true
+  end
+
+  hs.alert.show("Gemini app not found")
+  return false
 end
 
 ------------------------------------------------------------
@@ -196,12 +244,14 @@ local function toggleMaximizeCurrentWindow()
   local cur = win:frame()
   if framesEqual(cur, scr, 2) then
     local prev = savedFrames[id]
-    if prev then win:setFrame(prev, 0); savedFrames[id] = nil
+    if prev then
+      win:setFrame(prev, 0)
+      savedFrames[id] = nil
     else
       local w, h = math.floor(scr.w*0.7), math.floor(scr.h*0.7)
       local x = scr.x + math.floor((scr.w - w)/2)
       local y = scr.y + math.floor((scr.h - h)/2)
-      win:setFrame({x=x,y=y,w=w,h=h}, 0)
+      win:setFrame({ x = x, y = y, w = w, h = h }, 0)
     end
   else
     savedFrames[id] = cur
@@ -212,11 +262,18 @@ end
 local function toggleZoomLikeGreen()
   local win = getCurrentWindow()
   if not win then hs.alert.show("No focusable window"); return end
-  if win:isFullScreen() then win:setFullScreen(false); return end
+  if win:isFullScreen() then
+    win:setFullScreen(false)
+    return
+  end
   local ok = pcall(function() win:toggleZoom() end)
   if ok then return end
   local btn = win:zoomButton()
-  if btn then btn:performAction("AXPress") else hs.alert.show("Zoom button not available") end
+  if btn then
+    btn:performAction("AXPress")
+  else
+    hs.alert.show("Zoom button not available")
+  end
 end
 
 ------------------------------------------------------------
@@ -224,7 +281,9 @@ end
 ------------------------------------------------------------
 local leader = hs.hotkey.modal.new({ "ctrl" }, "j")
 local function exitLeader() leader:exit() end
-leader.entered = function() hs.timer.doAfter(0.8, function() leader:exit() end) end
+leader.entered = function()
+  hs.timer.doAfter(0.8, function() leader:exit() end)
+end
 
 local function bind_leader(letter, fn)
   leader:bind({}, letter, function() (fn or function() end)(); exitLeader() end)
@@ -270,12 +329,34 @@ bind_leader("t", function() launch_or_focus(targets.t) end) -- WezTerm
 bind_leader("w", function() launch_or_focus(targets.w) end) -- TradingView
 bind_leader("c", function() launch_or_focus(targets.c) end) -- Chrome
 bind_leader("o", function() launch_or_focus(targets.o) end) -- Obsidian
-bind_leader("v", function() focusVimRInTmp() end) -- VimR
+bind_leader("v", function() focusVimRInTmp() end)           -- VimR
 
-bind_leader("a", function() focusPWAChatGPT() end) -- PWA ChatGPT
-bind_leader("g", function() focusChatGPT() end) -- ChatGPT
+bind_leader("a", function() focusPWAChatGPT() end)          -- PWA ChatGPT
+bind_leader("g", function() focusChatGPT() end)             -- ChatGPT
+bind_leader("m", function() focusGemini() end)              -- Gemini (Chromeアプリ)
+
+bind_leader("d", function()                                 -- Downloads (Finder)
+  local downloads = HOME .. "/Downloads"
+  hs.execute(string.format([[open "%s"]], downloads), true)
+end)
 
 bind_leader("f", function() toggleMaximizeCurrentWindow() end)
 bind_leader("x", function() toggleZoomLikeGreen() end)
 
 bind_leader("s", function() takePartialScreenshotToPictures() end) -- Screenshot
+
+------------------------------------------------------------
+-- キーバインドまとめ (Leader = Ctrl+J)
+------------------------------------------------------------
+--   a : PWA ChatGPT  (Vivaldi/Chrome系 PWA 起動/フォーカス)
+--   g : ChatGPT      (デスクトップ版 起動/フォーカス)
+--   t : WezTerm      (起動/フォーカス)
+--   w : TradingView  (起動/フォーカス)
+--   c : Google Chrome(起動/フォーカス)
+--   o : Obsidian     (起動/フォーカス)
+--   v : VimR         (~/Tmp をCWDにして新規起動)
+--   d : Downloads    (Finder で ~/Downloads を開く)
+--   m : Gemini       (Chromeアプリ版 起動/フォーカス)
+--   f : Maximize <-> Restore（独自最大化/復元）
+--   x : Zoom        （緑ボタン相当, FSなら解除）
+--   s : Screenshot  （部分選択 → ~/Pictures/Screenshots に保存 & Finder で開く）

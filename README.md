@@ -11,13 +11,14 @@
 - LK+c : Chrome
 - LK+o : Obsidian
 - LK+g : ChatGPT
+- LK+m : Gemini
 - LK+a : PWA ChatGPT
 - LK+v : Vimr
 #### utility
 - LK+f : Maximize current window
 - LK+x : Zoom mode
 - LK+x : Screenshot
-
+- LK+d : Open Download dir by Finder
 
 
 Task
