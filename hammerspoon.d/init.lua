@@ -233,6 +233,7 @@ end
 
 ------------------------------------------------------------
 -- スクリーンショット（部分選択 → ~/Pictures/Screenshots/screen_shot_YYYYMMDD_HHMMSS.png）
+-- 撮影後に Finder で ~/Pictures/Screenshots を自動で開く版
 ------------------------------------------------------------
 local function takePartialScreenshotToPictures()
   local dir = HOME .. "/Pictures/Screenshots"
@@ -245,6 +246,14 @@ local function takePartialScreenshotToPictures()
     function(exitCode, _, err)
       if exitCode == 0 then
         hs.alert.show("Saved: " .. file)
+
+        ------------------------------------------------------------
+        -- 📂 スクショ後、Finder で保存フォルダを開く
+        ------------------------------------------------------------
+        hs.execute(string.format([[open "%s"]], dir), true)
+
+        -- もし「撮影したファイルを選択状態で開きたい」ならこちら：
+        -- hs.execute(string.format([[open -R "%s"]], file), true)
       else
         hs.alert.show("screencapture error: " .. (err or tostring(exitCode)))
       end

@@ -1,4 +1,24 @@
-Setting for mac os terminal
+## Short Cut Key
+- karabiner > hammberspoon > wezterm > nvim
+### karabiner
+- capskey > long push as ctrl, short push as esc
+- Right Command alone toggles Kana/Eisu
+### hammberspoon
+- LeaderKey = Ctrl + j
+#### open app
+- LK+t : Wezterm
+- LK+w : TradingView
+- LK+c : Chrome
+- LK+o : Obsidian
+- LK+g : ChatGPT
+- LK+a : PWA ChatGPT
+- LK+v : Vimr
+#### utility
+- LK+f : Maximize current window
+- LK+x : Zoom mode
+- LK+x : Screenshot
+
+
 
 Task
 zinit
