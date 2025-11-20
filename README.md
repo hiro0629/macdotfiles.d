@@ -19,6 +19,12 @@
 - LK+x : Zoom mode
 - LK+x : Screenshot
 - LK+d : Open Download dir by Finder
+### wezterm
+- LeaderKey = Ctrl + k
+- See wezterm.d/keymap.lua
+### nvim
+
+
 
 
 Task
