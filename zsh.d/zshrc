@@ -103,9 +103,6 @@ add-zle-hook-widget zle-line-init _cursor_by_keymap
 # 起動直後のカーソル（Insert想定）
 printf '\e[5 q'
 
-# --- 補助: Homebrew の starship を優先（必要なら有効化）---
-# eval "$(/opt/homebrew/bin/brew shellenv)"  # 必要なら
-
 # ============================================
 # ツール連携 / Tools
 # ============================================
