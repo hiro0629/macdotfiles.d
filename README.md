@@ -1,5 +1,4 @@
 Task
-small noice
 zinit
 starship
 
