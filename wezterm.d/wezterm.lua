@@ -28,8 +28,35 @@ config.window_frame = {
   inactive_titlebar_bg = "none",
   active_titlebar_bg   = "none",
 }
+
+-- ★ 背景グラデーション（軽めのドラキュラ風グラデ）
 config.window_background_gradient = {
-  colors = { "#192330" },
+  -- Linear / Radial も指定可能。ここでは斜め方向の Linear に
+  orientation = { Linear = { angle = -50.0 } },
+
+  -- グラデーションに使う色
+  colors = {
+    "#0f0c29",
+    "#282a36",
+    "#343746",
+    "#3a3f52",
+    "#343746",
+    "#282a36",
+  },
+  -- colors = { "Inferno" },
+
+  -- "Linear", "Basis", "CatmullRom" が指定可能
+  interpolation = "Linear",
+
+  -- "Rgb", "LinearRgb", "Hsv", "Oklab"
+  blend = "Rgb",
+
+  -- バンディングを抑えるためのノイズ量
+  noise = 64,
+
+  -- セグメント／滑らかさ（軽いグラデなのでデフォ寄り設定）
+  segment_size       = 11,
+  segment_smoothness = 1.0,
 }
 
 config.show_new_tab_button_in_tab_bar = false
