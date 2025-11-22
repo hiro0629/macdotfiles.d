@@ -1,26 +1,12 @@
-#### icon
-# nf-ple-left_half_circle_thick
-# nf-pl-left_hard_divider
-# nf-pl-left_hard_divider
-# nf-pl-right_hard_divider
-# nf-ple-right_half_circle_thick
-
 format = """
-[](fg:#7aa2f7)\
-$os\
-[ ](fg:#7aa2f7 bg:#1a1b26)\
 $direnv\
 $directory\
 $git_branch\
 $git_status\
 $git_metrics\
-[](fg:#1a1b26)\
 $fill\
-[](fg:#1a1b26)\
 $conda\
-[](fg:#9ece6a bg:#1a1b26)\
 $python\
-[](fg:#9ece6a)\
 \n$character\
 """
 
@@ -29,37 +15,34 @@ $cmd_duration
 $lua
 $rust
 $time
+$custom.o
 """
 
-[os]
-format = "[$symbol]($style)"
-style = 'fg:#1a1b26 bg:#7aa2f7'
-disabled = false
-
-[os.symbols]
-Macos = "  " # nf-fa-apple
-Ubuntu = "  " # nf-linux-ubuntu
-Debian = "  " # nf-linux-debian
-
+# ======================
+# Directory
+# ======================
 [directory]
 truncation_length = 6
 truncation_symbol = ' ' # nf-fa-folder_open
 truncate_to_repo = false
-home_symbol = ' ~' # nf-costum-home
-style = 'fg:#7aa2f7 bg:#1a1b26'
-read_only = ' 󰌾 ' # nf-md-lock
-read_only_style = 'fg:#f7768e bg:#1a1b26'
+home_symbol = '~'
+style = 'fg:#7aa2f7'
+read_only = ' 󰌾 '
+read_only_style = 'fg:#f7768e'
 format = '[$path]($style)[$read_only]($read_only_style)'
 
+# ======================
+# Git
+# ======================
 [git_branch]
-symbol = '  ' # nf-fa-github_alt, nf-fa-code_fork
+symbol = ' '
 truncation_length = 4
 truncation_symbol = ''
-style = 'fg:#7aa2f7 bg:#1a1b26'
-format = '[  $symbol$branch(:$remote_branch)]($style)' # nf-pl-left_soft_divider
+style = 'fg:#7aa2f7'
+format = '[ $symbol$branch(:$remote_branch)]($style)'
 
 [git_status]
-style = 'fg:#e0af68 bg:#1a1b26'
+style = 'fg:#e0af68'
 conflicted = '='
 ahead = '⇡${count}'
 behind = '⇣${count}'
@@ -73,52 +56,85 @@ deleted = '✘'
 format = '([\[$all_status$ahead_behind\]]($style))'
 
 [git_metrics]
-added_style = 'fg:#9ece6a bg:#1a1b26'
-deleted_style = 'fg:#9ece6a bg:#1a1b26'
+added_style = 'fg:#9ece6a'
+deleted_style = 'fg:#9ece6a'
 format = '[+$added/-$deleted]($deleted_style)'
 disabled = false
 
+# ======================
+# Fill (ライン)
+# ======================
 [fill]
 symbol = '─'
 style = 'blue'
 
+# ======================
+# Conda (Python Blue)
+# ======================
 [conda]
-symbol = ' ' # nf-dev-python
-style = 'fg:#9ece6a bg:#1a1b26'
+symbol = ' '
+style = 'fg:#306998'     # Python Blue
 format = '[ $symbol$environment ]($style)'
 ignore_base = false
 
+# ======================
+# Python (Python Yellow)
+# ======================
 [python]
-symbol = ' ' # nf-dev-python
-format = '[ ${symbol}${pyenv_prefix}(${version})(\($virtualenv\))]($style)'
+symbol = ' '
+style = 'fg:#FFD43B'     # Python Yellow
 pyenv_version_name = false
-style = 'fg:#1a1b26 bg:#9ece6a'
+format = '[ ${symbol}${pyenv_prefix}(${version})(\($virtualenv\))]($style)'
 
+# ======================
+# Direnv
+# ======================
 [direnv]
-format = '[$symbol$allowed]($style) '
-style = "bold fg:#1a1b26 bg:#cba6f7"
+format = '[ $symbol$allowed ]($style) '
+style = "bold fg:#1a1b26"
 disabled = false
 
+# ======================
+# Character (prompt)
+# ======================
 [character]
-success_symbol = '[❯](bold #9ece6a)'
-error_symbol = '[❯](bold red)'
+success_symbol = '[❯](bold #FFD43B)'   # Python Yellow
+error_symbol   = '[❯](bold red)'
 
+# ======================
+# Command duration
+# ======================
 [cmd_duration]
 min_time = 1
 style = 'fg:#e0af68'
-format = "[   $duration]($style)" # nf-pl-right_soft_divider, nf-mdi-clock
+format = "[ $duration ]($style)"
 
+# ======================
+# Lua
+# ======================
 [lua]
-symbol = "" # nf-seti-lua
-format = '[  $symbol $version](blue)' # nf-pl-right_soft_divider
+symbol = ""
+format = '[ $symbol $version ](blue)'
 
+# ======================
+# Rust
+# ======================
 [rust]
-symbol = "" # nf-dev-rust
-format = '[  $symbol $version](red)' # nf-pl-right_soft_divider
+symbol = ""
+format = '[ $symbol $version ](red)'
 
+# ======================
+# Time
+# ======================
 [time]
 disabled = false
 style = 'fg:#73daca'
-format = '[   $time]($style)' # nf-pl-right_soft_divider, nf-fa-clock_o
+format = '[  $time ]($style)'
 time_format = '%T'
 utc_time_offset = '+9'
+
+[custom.o]
+when = 'colima status 2>&1 | grep -qE "(^| )is running( |$)"'
+command = 'echo 🐳'
+format = "$output"   # ← これで名前や記号は出ない
+symbol = ""          # ← 念のため空に固定
