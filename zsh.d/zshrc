@@ -1,135 +1,134 @@
-# ============================================
-# 基本設定 / General
-# ============================================
+# ============================================================
+#  基本設定 / General
+# ============================================================
 export LANG=ja_JP.UTF-8
 export EDITOR="nvim"
 
-# ============================================
-# エイリアス / Aliases
-# ============================================
+# ============================================================
+#  Zinit 本体（プラグインマネージャ）
+#  ※ すべての zinit プラグインを使う前にロードする必要あり
+# ============================================================
+### Added by Zinit's installer
+if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
+    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
+    command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
+    command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
+        print -P "%F{33} %F{34}Installation successful.%f%b" || \
+        print -P "%F{160} The clone has failed.%f%b"
+fi
+
+source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+
+# --- Zinit annex（zinit の拡張モジュール）---
+zinit light-mode for \
+    zdharma-continuum/zinit-annex-as-monitor \
+    zdharma-continuum/zinit-annex-bin-gem-node \
+    zdharma-continuum/zinit-annex-patch-dl \
+    zdharma-continuum/zinit-annex-rust
+### End of Zinit's installer chunk
+
+
+# ============================================================
+#  エイリアス / Aliases
+# ============================================================
 if [ -f ~/.zsh_aliases ]; then
     source ~/.zsh_aliases
 fi
 
-# ローカル設定（マシンごとに変えたい設定用）
+# --- ローカル設定（マシンごとに変更したいもの）---
 if [ -f ~/.zshrc_local ]; then
   source ~/.zshrc_local
 fi
 
-# ============================================
-# シェル基本挙動 / Shell behavior
-# ============================================
-# ディレクトリ名だけで移動できるようにする（`cd` 省略）
-setopt autocd
 
-# --- (オプション) 軽めのスペル補正 / Command spell correction ---
-# cd ~/Ptojects → ~/Projects のようなタイプミスを自動補正
-#setopt correct          # コマンド名のスペル補正
-#setopt correct_all      # 引数も含めて補正（好みで）
+# ============================================================
+#  シェル基本挙動 / Shell behavior
+# ============================================================
+setopt autocd  # ディレクトリ名だけで移動（cd 省略）
 
-# --------------------------------------------
-# 履歴設定 / History
-# --------------------------------------------
+
+# ============================================================
+#  履歴設定 / History
+# ============================================================
 HISTFILE=~/.zsh_history
 HISTSIZE=50000
 SAVEHIST=50000
-# 特定コマンドは履歴に残さない
+
+# 履歴ノイズを減らす（不要コマンド）
 HISTIGNORE='history:pwd:ls:ll:exit:dot:Tmp:vv:git:gg'
-setopt INC_APPEND_HISTORY      # 履歴をリアルタイムに追記
-setopt SHARE_HISTORY           # 複数シェル間で履歴共有
 
-# --- (オプション) 履歴のノイズを減らす ---
-setopt HIST_IGNORE_DUPS       # 同じコマンドを連続で実行した場合、1つだけ保存
-setopt HIST_REDUCE_BLANKS     # 余分な空白を削除して履歴保存
+setopt INC_APPEND_HISTORY      # 実行直後に履歴追記
+setopt SHARE_HISTORY           # シェル間で履歴共有
+setopt HIST_IGNORE_DUPS        # 連続重複を1つに
+setopt HIST_REDUCE_BLANKS      # 余計な空白削除
 
-# ============================================
-# 補完設定 (オプション) / Completion (optional)
-# ============================================
-# zsh の強力な補完機能を明示的に有効化・強化したい場合に使うブロックです。
-# 必要になったら一つずつ # を外して試してください。
 
-# --- 補完システムの初期化 ---
+# ============================================================
+#  補完設定 / Completion
+# ============================================================
 autoload -Uz compinit
 compinit
 
-# --- 補完メニューを選択式にする（Tab で一覧 → 矢印キーで選択） ---
 zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'  # 大文字小文字無視
+setopt COMPLETE_IN_WORD       # 単語途中でも補完
+setopt COMPLETE_ALIASES       # alias でも補完を効かせる
 
-# --- 補完の大文字・小文字を区別しない ---
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
-# --- 単語の途中でも補完できるようにする（complete_in_word） ---
-setopt COMPLETE_IN_WORD
-
-# --- (オプション) エイリアスでも補完を効かせる ---
-setopt COMPLETE_ALIASES
-
-# ============================================
-# Starship / プロンプト設定
-# ============================================
+# ============================================================
+#  Starship プロンプト / Prompt
+# ============================================================
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 
-# viモード（zle）
+# --- vi モード（zle）---
 bindkey -v
-# Insert モードで `jj` → Normal モードへ
-bindkey -M viins 'jj' vi-cmd-mode
+bindkey -M viins 'jj' vi-cmd-mode  # Insert で jj → Normal
 
-# --- (オプション) 追加キーバインド例 / Extra keybindings (optional) ---
-# ↑↓ で「コマンド履歴をインクリメンタル検索」したい場合などに。
-#bindkey '^P' up-line-or-history      # Ctrl-p: 上の履歴
-#bindkey '^N' down-line-or-history    # Ctrl-n: 下の履歴
-#bindkey '^A' beginning-of-line       # Ctrl-a: 行頭へ
-#bindkey '^E' end-of-line             # Ctrl-e: 行末へ
-
-# Starship 初期化（多重初期化ガード）
+# --- Starship 初期化（多重初期化防止）---
 if [[ -z ${STARSHIP_INIT_DONE-} ]]; then
   eval "$(starship init zsh)"
   typeset -g STARSHIP_INIT_DONE=1
 fi
 
-# --------------------------------------------
-# カーソル形状をモードで出し分け
-# （※ Starshipの関数は上書きしない）
-# --------------------------------------------
+# --- カーソル形状をモードで出し分け ---
 autoload -Uz add-zle-hook-widget
 function _cursor_by_keymap {
   case $KEYMAP in
-    vicmd)      printf '\e[1 q' ;;  # Normal: ブロックカーソル
-    viins|main) printf '\e[5 q' ;;  # Insert: ビームカーソル
+    vicmd)      printf '\e[1 q' ;;  # Normal: ブロック
+    viins|main) printf '\e[5 q' ;;  # Insert: ビーム
   esac
 }
 add-zle-hook-widget zle-keymap-select _cursor_by_keymap
 add-zle-hook-widget zle-line-init _cursor_by_keymap
-# 起動直後のカーソル（Insert想定）
-printf '\e[5 q'
+printf '\e[5 q'  # 起動直後（Insert）
 
-# ============================================
-# ツール連携 / Tools
-# ============================================
 
-# zoxide（高速ディレクトリジャンプ）
+# ============================================================
+#  ツール連携 / Tools
+# ============================================================
+
+# zoxide（高速 cd）
 eval "$(zoxide init zsh)"
 
-# --------------------------------------------
 # Homebrew PATH
-# --------------------------------------------
 export PATH="/opt/homebrew/bin:$PATH"
 export PATH="/opt/homebrew/sbin:$PATH"
 
-# --------------------------------------------
 # pyenv 設定
-# --------------------------------------------
 export PATH="$HOME/.pyenv/bin:$PATH"
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init --path)"
   eval "$(pyenv init -)"
 fi
 
-# ============================================
-# ユーティリティ関数 / Utility functions
-# ============================================
 
-# fcp: ファイル内容を pbcopy でクリップボードへ
+# ============================================================
+#  ユーティリティ関数 / Utility Functions
+# ============================================================
+
+# --- fcp: ファイル内容を pbcopy ---
 fcp() {
   if [[ -f "$1" ]]; then
     cat "$1" | pbcopy
@@ -139,15 +138,9 @@ fcp() {
   fi
 }
 
-# ==========================
-# calc(): 軽量 IPython 起動
-# - venv を（サブシェル内で）activate
-# - IPython 終了時に deactivate
-# - 呼び出し元シェルの環境は汚さない
-# ==========================
+# --- calc(): 隔離環境で IPython ---
 calc() {
   local VENV="${CALC_VENV:-$HOME/.venvs/calc}"
-  # オプションは配列にしておく
   local -a IPY_OPTS=(--quick --no-banner --HistoryManager.enabled=False)
 
   if [[ ! -x "$VENV/bin/ipython" ]]; then
@@ -158,18 +151,13 @@ calc() {
   (
     source "$VENV/bin/activate"
     export VIRTUAL_ENV_DISABLE_PROMPT=1
-
-    # 配列を展開して実行
     ipython "${IPY_OPTS[@]}"
-
     type deactivate >/dev/null 2>&1 && deactivate
   )
 }
 
-# --- (オプション) ディレクトリ移動後に自動で ls する ---
-#chpwd() { ls -la }
 
-# ============================================
-# fzf 設定 / fzf integration
-# ============================================
+# ============================================================
+#  fzf 連携 / fzf Integration
+# ============================================================
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
