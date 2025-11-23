@@ -1,6 +1,4 @@
 Task
-zinit
-starship
 
 nvim
 🧩 ④ 診断・問題ビュー（Problems）
