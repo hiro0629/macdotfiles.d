@@ -4,7 +4,7 @@
 
 # 履歴ベースの自動補完（右側にグレーの提案が出る）
 # 例: git chec → git checkout develop を提案
-# zinit light zsh-users/zsh-autosuggestions
+zinit light zsh-users/zsh-autosuggestions
 
 # 高速コマンド色分け（ミスを赤色で警告）通常版より高速
 # 例: git commmit → “commmit” が赤くなる
@@ -12,11 +12,11 @@ zinit light zdharma-continuum/fast-syntax-highlighting
 
 # ↑↓キーで「部分一致検索」できる履歴検索
 # autosuggestions と組み合わせると最強
-# zinit light zsh-users/zsh-history-substring-search
+zinit light zsh-users/zsh-history-substring-search
 
 # docker / kubectl / brew / gh など、数百の補完を追加
 # 補完が強化され、コマンド入力が圧倒的に快適
-# zinit light zsh-users/zsh-completions
+zinit light zsh-users/zsh-completions
 
 
 # ============================================================

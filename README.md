@@ -1,4 +1,5 @@
 Task
+custom zinit
 
 nvim
 🧩 ④ 診断・問題ビュー（Problems）

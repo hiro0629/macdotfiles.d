@@ -39,7 +39,7 @@ return {
       "<leader>fb",
       function()
         require("telescope.builtin").buffers({
-          sort_mru = true,           -- 最近使った順に並べる
+          sort_mru = true,              -- 最近使った順に並べる
           ignore_current_buffer = true, -- 今のバッファはリストから除外
         })
       end,
@@ -68,12 +68,16 @@ return {
       end,
       desc = "Telescope: Git status",
     },
-
-},
+  },
 
   -- ✅ Telescope 全体設定
   opts = {
     defaults = {
+      -- ファイル候補の表示形式:
+      -- 左にファイル名、その右にディレクトリパスを表示する
+      -- 例:  init.lua  nvim/lua/config/
+      path_display = { "filename_first" },
+
       -- レイアウト設定：常にプレビューが出るように調整
       layout_strategy = "horizontal",
       layout_config = {
