@@ -24,6 +24,7 @@ echo "[i] OS_TYPE      = ${OS_TYPE}"
 symlink "${DOTFILES_DIR}/zsh.d/zsh_profile" "${HOME}/.zsh_profile"
 symlink "${DOTFILES_DIR}/zsh.d/zshrc"        "${HOME}/.zshrc"
 symlink "${DOTFILES_DIR}/zsh.d/zsh_aliases"  "${HOME}/.zsh_aliases"
+symlink "${DOTFILES_DIR}/zsh.d/zsh_plugins.zsh"  "${HOME}/.zsh_plugins.zsh"
 
 # ---------- git ----------
 symlink "${DOTFILES_DIR}/git.d/gitconfig"    "${HOME}/.gitconfig"

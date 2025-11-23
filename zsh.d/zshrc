@@ -29,6 +29,13 @@ zinit light-mode for \
     zdharma-continuum/zinit-annex-rust
 ### End of Zinit's installer chunk
 
+# ============================================
+# Zinit プラグイン読み込み（外部ファイル）
+# ============================================
+if [[ -f "$HOME/.zsh_plugins.zsh" ]]; then
+  source "$HOME/.zsh_plugins.zsh"
+fi
+
 
 # ============================================================
 #  エイリアス / Aliases
