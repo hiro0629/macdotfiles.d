@@ -158,6 +158,24 @@ fcp() {
   fi
 }
 
+
+# --- cdf: fzf でディレクトリ選択 → cd ---
+cdf() {
+  local dir
+
+  # fd が入っていれば優先して使う（高速）
+  if command -v fd >/dev/null 2>&1; then
+    dir=$(fd -t d . 2>/dev/null | fzf --height 40% --reverse --ansi) || return
+  else
+    # fd がない場合は find で代用（深さはお好みで）
+    dir=$(find . -type d -maxdepth 5 2>/dev/null | fzf --height 40% --reverse --ansi) || return
+  fi
+
+  cd "$dir" || return
+  ls
+}
+
+
 # --- calc(): 隔離環境で IPython ---
 calc() {
   local VENV="${CALC_VENV:-$HOME/.venvs/calc}"
