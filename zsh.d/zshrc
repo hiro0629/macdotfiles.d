@@ -93,6 +93,19 @@ export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 bindkey -v
 bindkey -M viins 'jj' vi-cmd-mode  # Insert で jj → Normal
 
+# ============================================================
+#  ZLE / Vim モード調整（履歴移動時に行頭へ）
+# ============================================================
+# Normal モードで `k` を押したとき:
+#   1. 1つ上の履歴に移動（up-line-or-history）
+#   2. カーソルを行頭へ移動（beginning-of-line）
+function up_history_bol() {
+  zle up-line-or-history
+  zle beginning-of-line
+}
+zle -N up_history_bol
+bindkey -M vicmd 'k' up_history_bol
+
 # --- Starship 初期化（多重初期化防止）---
 if [[ -z ${STARSHIP_INIT_DONE-} ]]; then
   eval "$(starship init zsh)"
