@@ -3,6 +3,11 @@ alias vv='nvim'
 alias vi='vim'
 
 # command short cut
+# ディレクトリ＝青、シンボリックリンク＝シアンなど
+export LSCOLORS="ExFxBxDxCxegedabagacad"
+alias ls='ls -G'
+alias ll='ls -G -l'
+alias la='ls -G -A'
 alias hs='history 200'
 alias cl='clear'
 alias gg='git'
