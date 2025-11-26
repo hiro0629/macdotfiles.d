@@ -24,17 +24,18 @@ config.default_cursor_style          = "BlinkingBar"
 
 -- タイトルバー＋リサイズのみ
 config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
+
+-- ★ タブの文字サイズを本体の1.6倍に
 config.window_frame = {
+  font = wezterm.font("Hack Nerd Font", { weight = "Medium" }),
+  font_size = config.font_size * 0.6,
+  active_titlebar_bg = "none",
   inactive_titlebar_bg = "none",
-  active_titlebar_bg   = "none",
 }
 
--- ★ 背景グラデーション（軽めのドラキュラ風グラデ）
+-- 背景グラデーション
 config.window_background_gradient = {
-  -- Linear / Radial も指定可能。ここでは斜め方向の Linear に
   orientation = { Linear = { angle = -50.0 } },
-
-  -- グラデーションに使う色
   colors = {
     "#0f0c29",
     "#282a36",
@@ -43,33 +44,56 @@ config.window_background_gradient = {
     "#343746",
     "#282a36",
   },
-  -- colors = { "Inferno" },
-
-  -- "Linear", "Basis", "CatmullRom" が指定可能
   interpolation = "Linear",
-
-  -- "Rgb", "LinearRgb", "Hsv", "Oklab"
   blend = "Rgb",
-
-  -- バンディングを抑えるためのノイズ量
   noise = 64,
-
-  -- セグメント／滑らかさ（軽いグラデなのでデフォ寄り設定）
   segment_size       = 11,
   segment_smoothness = 1.0,
 }
 
 config.show_new_tab_button_in_tab_bar = false
-config.colors = {
-  tab_bar = { inactive_tab_edge = "none" },
-  split   = "#8699C0",
-}
-
 config.scrollback_lines = 3500
 config.exit_behavior    = "CloseOnCleanExit"
-
--- ★ ネイティブのフルスクリーンを無効化（＝Spaceを増やさないシンプルFSへ）
 config.native_macos_fullscreen_mode = false
+
+------------------------------------------------------------
+-- ★ タブの色（カレントタブ: #7aa2f7）
+------------------------------------------------------------
+config.colors = {
+  tab_bar = {
+    background = "none",
+
+    -- ★ アクティブ（カレント）タブ
+    active_tab = {
+      bg_color = "#7aa2f7",
+      fg_color = "#1a1b26",   -- 読みやすい濃色に
+      intensity = "Bold",
+      italic = false,
+      underline = "None",
+    },
+
+    -- 非アクティブタブ
+    inactive_tab = {
+      bg_color = "none",
+      fg_color = "#c0c0c0",
+      intensity = "Normal",
+      italic = false,
+      underline = "None",
+    },
+
+    -- 非アクティブタブのホバー
+    inactive_tab_hover = {
+      bg_color = "#2b2d37",
+      fg_color = "#e0e0e0",
+      italic = false,
+    },
+
+    new_tab = {
+      bg_color = "none",
+      fg_color = "#6b6b6b",
+    },
+  },
+}
 
 ------------------------------------------------------------
 -- ステータス：Copy Mode 表示
@@ -107,7 +131,7 @@ for _, km in ipairs(keymaps.keys) do
   table.insert(config.keys, km)
 end
 
--- 右クリック：コピー（貼り付けはお好みで）
+-- 右クリック：コピー
 config.mouse_bindings = {
   {
     event  = { Down = { streak = 1, button = "Right" } },
