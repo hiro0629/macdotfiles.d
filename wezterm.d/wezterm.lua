@@ -1,3 +1,5 @@
+-- ~/.config/wezterm/wezterm.lua (macOS 用)
+
 local wezterm = require("wezterm")
 
 -- ★ 同じディレクトリの keymap.lua を確実に読み込む
@@ -30,10 +32,10 @@ config.default_cursor_style          = "BlinkingBar"
 -- タイトルバー＋リサイズのみ
 config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
 
--- ★ タブの文字サイズを本体の0.6倍に
+-- ★ タイトルバーのフォント（タブ文字サイズは本体の 0.6 倍）
 config.window_frame = {
   font = wezterm.font("Hack Nerd Font", { weight = "Medium" }),
-  font_size = config.font_size * 0.6,  -- ← ここで倍率調整（大きすぎれば 1.2 とかに）
+  font_size = config.font_size * 0.6,
   active_titlebar_bg = "none",
   inactive_titlebar_bg = "none",
 }
@@ -62,43 +64,122 @@ config.exit_behavior    = "CloseOnCleanExit"
 config.native_macos_fullscreen_mode = false
 
 ------------------------------------------------------------
--- ★ タブの色（カレントタブ: #7aa2f7）
+-- ★ タブバー：Linux 版から移植したカラー設定
 ------------------------------------------------------------
 config.colors = {
   tab_bar = {
-    background = "none",
+    background = "#11111b",
 
-    -- ★ アクティブ（カレント）タブ
+    -- ★ カレントタブ（アクティブタブ）
     active_tab = {
-      bg_color = "#7aa2f7",
-      fg_color = "#1a1b26",   -- 読みやすい濃色
+      -- bg_color = "#7aa2f7",
+      -- bg_color = "#7096e6",
+      bg_color = "#5774b3",
+      -- fg_color = "#f7f7f7",
+      fg_color = "#79e0f7",
       intensity = "Bold",
-      italic = false,
       underline = "None",
+      italic = false,
+      strikethrough = false,
     },
 
     -- 非アクティブタブ
     inactive_tab = {
-      bg_color = "none",
+      bg_color = "#313244",
+      -- fg_color = "#cdd6f4",
       fg_color = "#c0c0c0",
       intensity = "Normal",
-      italic = false,
       underline = "None",
-    },
-
-    -- 非アクティブタブのホバー
-    inactive_tab_hover = {
-      bg_color = "#2b2d37",
-      fg_color = "#e0e0e0",
       italic = false,
+      strikethrough = false,
     },
 
-    new_tab = {
-      bg_color = "none",
-      fg_color = "#6b6b6b",
+    -- 非アクティブタブ + ホバー
+    inactive_tab_hover = {
+      bg_color = "#45475a",
+      fg_color = "#f5e0dc",
+      intensity = "Normal",
+      underline = "None",
+      italic = false,
+      strikethrough = false,
     },
+
+    -- 新しいタブボタン
+    new_tab = {
+      bg_color = "#11111b",
+      fg_color = "#cdd6f4",
+      intensity = "Normal",
+      underline = "None",
+      italic = false,
+      strikethrough = false,
+    },
+    new_tab_hover = {
+      bg_color = "#181825",
+      fg_color = "#f5e0dc",
+      intensity = "Normal",
+      underline = "None",
+      italic = false,
+      strikethrough = false,
+    },
+
+    inactive_tab_edge = "none",
   },
+
+  -- split の線の色
+  split = "#8699C0",
 }
+
+------------------------------------------------------------
+-- ★ タブタイトル：カレントディレクトリの末尾2フォルダを表示
+-- 例: ~/Projects/FXsystem/DB → "FXsystem/DB"
+-- （📂 を付けたければ return "📂 " .. tail に変更）
+------------------------------------------------------------
+local function cwd_tail_two(pane)
+  local cwd_uri = pane.current_working_dir
+  if not cwd_uri then
+    return ""
+  end
+
+  -- Url オブジェクト → 文字列に変換（"file:///Users/..."）
+  local cwd = tostring(cwd_uri)
+  cwd = cwd:gsub("^file://", "")  -- "file://" プレフィックスを削除
+
+  -- パスを / で分割して末尾2要素を取り出す
+  local parts = {}
+  for part in cwd:gmatch("[^/]+") do
+    table.insert(parts, part)
+  end
+
+  if #parts == 0 then
+    return ""
+  end
+
+  local last  = parts[#parts]
+  local prev  = parts[#parts - 1]
+
+  local tail
+  if prev then
+    tail = prev .. "/" .. last
+  else
+    tail = last
+  end
+
+  -- アイコン付きにしたいなら↓を使う:
+  -- return "📂 " .. tail
+  return tail
+end
+
+wezterm.on("format-tab-title", function(tab, tabs, panes, cfg, hover, max_width)
+  local title = cwd_tail_two(tab.active_pane)
+  if title == "" then
+    -- CWD が取れないときはデフォルトタイトル
+    title = tab.active_pane.title
+  end
+
+  return {
+    { Text = " " .. title .. " " },
+  }
+end)
 
 ------------------------------------------------------------
 -- ステータス：Copy Mode 表示
@@ -106,44 +187,6 @@ config.colors = {
 wezterm.on("update-right-status", function(window, _)
   local text = (window:active_key_table() == "copy_mode") and " 📋 COPY MODE " or ""
   window:set_right_status(text)
-end)
-
-------------------------------------------------------------
--- ★ タブタイトルをカレントディレクトリ名に
-------------------------------------------------------------
-wezterm.on("format-tab-title", function(tab, tabs, panes, _cfg, hover, max_width)
-  local title   = tab.active_pane.title
-  local cwd_uri = tab.active_pane.current_working_dir
-
-  if cwd_uri then
-    local cwd_str
-
-    -- バージョンによって current_working_dir の型が違うので場合分け
-    if type(cwd_uri) == "userdata" then
-      -- 新しめの WezTerm: Url オブジェクト
-      cwd_str = cwd_uri.file_path or ""
-    elseif type(cwd_uri) == "string" then
-      -- 古めの WezTerm: "file:///Users/..." の文字列
-      cwd_str = cwd_uri
-    else
-      cwd_str = tostring(cwd_uri)
-    end
-
-    -- "file://..." を削る（文字列だった場合用）
-    cwd_str = cwd_str:gsub("^file://", "")
-    -- 末尾の / を削る
-    cwd_str = cwd_str:gsub("/+$", "")
-    -- 最後のパス名だけ抜き出す
-    local cwd_name = cwd_str:match("([^/]+)$") or cwd_str
-
-    if cwd_name ~= "" then
-      title = cwd_name
-    end
-  end
-
-  return {
-    { Text = "  " .. title .. "  " },
-  }
 end)
 
 ------------------------------------------------------------
@@ -174,7 +217,9 @@ for _, km in ipairs(keymaps.keys) do
   table.insert(config.keys, km)
 end
 
--- 右クリック：コピー
+------------------------------------------------------------
+-- マウス設定（右クリックでコピー）
+------------------------------------------------------------
 config.mouse_bindings = {
   {
     event  = { Down = { streak = 1, button = "Right" } },
